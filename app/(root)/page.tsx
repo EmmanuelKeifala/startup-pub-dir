@@ -1,5 +1,13 @@
-import Image from "next/image";
+import {
+  StartUpOverview,
+  StartUpList,
+} from "@/components/app-components/index";
 
 export default function Home() {
-  return <div></div>;
+  return (
+    <div>
+      <StartUpOverview />
+      <StartUpList />
+    </div>
+  );
 }

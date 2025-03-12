@@ -1,10 +1,12 @@
 @import "tailwindcss";
-
 @plugin 'tailwindcss-animate';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  --font-ibm-plex-sans: IBM Plex Sans, sans-serif;
+  --font-bebas-neue: var(--bebas-neue);
+
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
 
@@ -102,6 +104,15 @@
 @utility root-container {
   /* Root */
   @apply flex min-h-screen flex-1 flex-col bg-pattern bg-cover bg-top bg-dark-100 px-5 xs:px-10 md:px-16;
+}
+
+@utility start-up-overview {
+  /* Start Up Overview */
+  @apply flex flex-col-reverse items-center gap-12 sm:gap-32 xl:flex-row xl:gap-8;
+
+  & h1 {
+    @apply text-5xl font-semibold text-white md:text-7xl;
+  }
 }
 
 @layer base {
