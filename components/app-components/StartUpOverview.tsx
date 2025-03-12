@@ -44,16 +44,14 @@ function StartUpOverview({
           <StartUpCover
             variant="medium"
             className="z-10"
-            primaryColor={colors.primaryColor}
-            accentColor={colors.secondaryColor}
+            accentColor={colors.primaryColor}
             coverImage={logo}
           />
 
           <div className="absolute left-16 top-10 rotate-13 opacity-40 max-sm:hidden">
             <StartUpCover
               variant="medium"
-              primaryColor={colors.primaryColor}
-              accentColor={colors.secondaryColor}
+              accentColor={colors.primaryColor}
               coverImage={logo}
             />
           </div>

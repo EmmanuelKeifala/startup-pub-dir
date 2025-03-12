@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "lifeblood-57xl.vercel.app",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };
