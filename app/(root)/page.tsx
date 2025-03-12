@@ -2,12 +2,18 @@ import {
   StartUpOverview,
   StartUpList,
 } from "@/components/app-components/index";
+import startups from "@/dummy";
 
 export default function Home() {
   return (
     <div>
-      <StartUpOverview />
-      <StartUpList />
+      <StartUpOverview {...startups[0]} />
+
+      <StartUpList
+        title="New StartUps"
+        startup={startups}
+        containerClassName="mt-28"
+      />
     </div>
   );
 }

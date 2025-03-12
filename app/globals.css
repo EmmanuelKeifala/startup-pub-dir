@@ -115,6 +115,38 @@
   }
 }
 
+@utility start-up-info {
+  @apply mt-7 flex flex-row flex-wrap gap-4 text-xl text-light-100;
+}
+
+@utility start-up-description {
+  @apply mt-2 text-justify text-xl text-light-100;
+}
+
+@utility start-up-overview_btn {
+  @apply mt-4! min-h-14! w-fit! bg-primary! text-dark-100! hover:bg-primary/90! max-md:w-full!;
+}
+@utility start-up-cover_extra_small {
+  /* start-up Cover */
+  @apply w-[28.95px] h-10;
+}
+
+@utility start-up-cover_small {
+  @apply w-[55px] h-[76px];
+}
+
+@utility start-up-cover_medium {
+  @apply w-[144px] h-[199px];
+}
+
+@utility start-up-cover_regular {
+  @apply xs:w-[174px] w-[114px] xs:h-[239px] h-[169px];
+}
+
+@utility start-up-cover_wide {
+  @apply xs:w-[296px] w-[256px] xs:h-[404px] h-[354px];
+}
+
 @layer base {
   :root {
     --radius: 0.5rem;
