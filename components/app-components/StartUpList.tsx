@@ -1,20 +1,24 @@
 import { Startup } from "@/dummy";
 import React from "react";
+import { StartUpCard } from "./index";
 
 function StartUpList({
-  startup,
+  startups,
   title,
   containerClassName,
 }: {
-  startup: Startup[];
+  startups: Startup[];
   title: string;
   containerClassName: string;
 }) {
   return (
-    <section className="--font-geist">
-      <h2 className="font-bebas-neue text-4xl text-light-100 ">
-        Popular StartUps
-      </h2>
+    <section className={containerClassName}>
+      <h2 className="font-bebas-neue text-4xl text-light-100 mt-4">{title}</h2>
+      <ul className="start-up-list">
+        {startups.map((startup) => (
+          <StartUpCard key={startup.name} {...startup} />
+        ))}
+      </ul>
     </section>
   );
 }

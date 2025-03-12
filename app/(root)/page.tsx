@@ -11,7 +11,7 @@ export default function Home() {
 
       <StartUpList
         title="New StartUps"
-        startup={startups}
+        startups={startups}
         containerClassName="mt-28"
       />
     </div>

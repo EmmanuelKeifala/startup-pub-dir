@@ -6,11 +6,11 @@ import { StartUpCover } from "./index";
 
 function StartUpOverview({
   category,
-  contact,
+  // contact,
   description,
   name,
   rating,
-  reviews,
+  // reviews,
   logo,
   colors,
 }: Startup) {

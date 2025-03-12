@@ -147,6 +147,18 @@
   @apply xs:w-[296px] w-[256px] xs:h-[404px] h-[354px];
 }
 
+@utility start-up-list {
+  /* start-up List */
+  @apply mt-10 flex flex-wrap gap-5 max-xs:justify-between xs:gap-10;
+}
+
+@utility start-up_name {
+  @apply mt-2 line-clamp-1 text-base font-semibold text-white xs:text-xl;
+}
+@utility start-up_category {
+  @apply mt-1 line-clamp-1 text-sm italic text-light-100 xs:text-base;
+}
+
 @layer base {
   :root {
     --radius: 0.5rem;
