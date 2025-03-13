@@ -7,6 +7,8 @@ import {
   IKUpload,
   ImageKitContext,
 } from "imagekitio-next";
+import { toast } from "sonner";
+
 import { Upload } from "lucide-react";
 import { useRef, useState } from "react";
 const { publicKey, urlEndpoint } = config.imagekit;
@@ -46,12 +48,16 @@ const ImageUpload = ({
 
   const onError = (err: any) => {
     console.log("Error", err);
+    toast.error("Error uploading file", {
+      description: err.message,
+    });
   };
 
   const onSuccess = (res: any) => {
     console.log("Success", res);
     setFile(res);
     onFileChange(res.filePath);
+    toast.success("File uploaded successfully");
   };
 
   return (
