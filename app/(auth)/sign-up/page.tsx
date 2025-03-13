@@ -9,10 +9,12 @@ function SignUp() {
       type="SIGN_UP"
       schema={signUpSchema}
       defaultValues={{
+        fullName: "",
         email: "",
+        role: "user",
+        profilePicture: "",
         password: "",
         confirmPassword: "",
-        fullName: "",
       }}
       onSubmit={() => {}}
     />

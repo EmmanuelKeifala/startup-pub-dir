@@ -6,9 +6,15 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import React from "react";
@@ -21,9 +27,12 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 import { z, ZodType } from "zod";
+import ImageUpload from "../ImageUpload";
 
 const FIELD_NAMES = {
   fullName: "Full Name",
+  role: "Role",
+  profilePicture: "Profile Picture",
   email: "Email",
   password: "Password",
   confirmPassword: "Confirm Password",
@@ -42,6 +51,7 @@ interface Props<T extends FieldValues> {
   defaultValues: DefaultValues<T>;
   onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
 }
+
 function AuthForm<T extends FieldValues>({
   type,
   schema,
@@ -56,6 +66,7 @@ function AuthForm<T extends FieldValues>({
   const handleSubmit: SubmitHandler<T> = async (data) => {
     onSubmit(data);
   };
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold text-white">
@@ -74,12 +85,34 @@ function AuthForm<T extends FieldValues>({
                     {FIELD_NAMES[field.name as keyof typeof FIELD_NAMES]}
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      required
-                      type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
-                      {...field}
-                      className="form-input"
-                    />
+                    {field.name === "profilePicture" ? (
+                      <ImageUpload onFileChange={field.onChange} />
+                    ) : field.name === "role" ? (
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Role" />
+                        </SelectTrigger>
+                        <SelectContent className="form-input">
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="startup_owner">
+                            Startup Owner
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        required
+                        type={
+                          FIELD_TYPES[field.name as keyof typeof FIELD_TYPES] ||
+                          "text"
+                        }
+                        {...field}
+                        className="form-input"
+                      />
+                    )}
                   </FormControl>
                 </FormItem>
               )}

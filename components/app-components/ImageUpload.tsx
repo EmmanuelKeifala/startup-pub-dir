@@ -41,7 +41,7 @@ const authenticator = async () => {
 const ImageUpload = ({
   onFileChange,
 }: {
-  onFileChange: (filePath: string) => {};
+  onFileChange: (filePath: string) => any;
 }) => {
   const ikUploadRef = useRef(null);
   const [file, setFile] = useState<{ filePath: string } | null>(null);

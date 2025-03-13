@@ -1,8 +1,13 @@
 import { z } from "zod";
 
+// TODO: when done with core features might add investor mode
 export const signUpSchema = z
   .object({
     fullName: z.string().min(4, { message: "Full name is required" }),
+    role: z.enum(["startup_owner", "user"], {
+      required_error: "Role is required",
+    }),
+    profilePicture: z.string().optional(),
     email: z.string().email({ message: "Invalid email address" }),
     password: z
       .string()
