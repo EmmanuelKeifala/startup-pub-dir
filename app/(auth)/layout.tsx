@@ -29,7 +29,7 @@ function Layout({ children }: { children: ReactNode }) {
       </section>
 
       {/* Animation Section */}
-      <section className="auth-illustration flex justify-center items-center mt-3">
+      <section className="auth-illustration flex justify-center items-center">
         <div className="w-3/4 md:w-full max-w-lg">
           <Lottie animationData={authAnimation} loop={true} />
         </div>
