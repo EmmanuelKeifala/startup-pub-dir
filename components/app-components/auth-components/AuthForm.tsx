@@ -28,6 +28,8 @@ import {
 } from "react-hook-form";
 import { z, ZodType } from "zod";
 import ImageUpload from "../ImageUpload";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const FIELD_NAMES = {
   fullName: "Full Name",
@@ -44,12 +46,13 @@ const FIELD_TYPES = {
   password: "password",
   confirmPassword: "password",
 };
-
 interface Props<T extends FieldValues> {
-  type: "SIGN_UP" | "SIGN_IN";
   schema: ZodType<T>;
-  defaultValues: DefaultValues<T>;
-  onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
+  defaultValues: T;
+  // onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
+  onSubmit: any;
+
+  type: "SIGN_IN" | "SIGN_UP";
 }
 
 function AuthForm<T extends FieldValues>({
@@ -58,13 +61,28 @@ function AuthForm<T extends FieldValues>({
   defaultValues,
   onSubmit,
 }: Props<T>) {
+  const router = useRouter();
   const form: UseFormReturn<T> = useForm({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
   const handleSubmit: SubmitHandler<T> = async (data) => {
-    onSubmit(data);
+    const result = await onSubmit(data);
+
+    if (result?.success) {
+      toast.success(
+        `${
+          type === "SIGN_IN"
+            ? "You have successfully signed in"
+            : "You have successfully signed up"
+        }`
+      );
+
+      router.push("/");
+    } else {
+      toast.error(result.error || "Something went wrong");
+    }
   };
 
   return (

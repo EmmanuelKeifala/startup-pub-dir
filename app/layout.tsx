@@ -25,11 +25,12 @@ export const metadata: Metadata = {
   description: "Made to keep track of all startups in Sierra Leone",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
+  // const session = await auth();
   return (
     <html lang="en">
       <body
