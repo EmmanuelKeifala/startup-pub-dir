@@ -8,13 +8,6 @@ import { RocketIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Session } from "next-auth";
-import { signOut } from "@/auth";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 function Header({ session }: { session: Session }) {
   const pathName = usePathname();
@@ -25,8 +18,10 @@ function Header({ session }: { session: Session }) {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+
       setScrolled(currentScrollY > 20);
       setVisible(currentScrollY < lastScrollY || currentScrollY < 100);
+
       setLastScrollY(currentScrollY);
     };
 
@@ -51,7 +46,6 @@ function Header({ session }: { session: Session }) {
             scrolled ? "bg-black/80 shadow-xl" : "bg-black/50"
           )}
         >
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <motion.div
               initial={{ rotate: 0 }}
@@ -65,14 +59,16 @@ function Header({ session }: { session: Session }) {
             </span>
           </Link>
 
-          {/* Navigation */}
           <nav className="flex-1 flex justify-end">
             <ul className="flex flex-row items-center gap-6">
               {[
                 { href: "/startUps", label: "StartUps" },
-                { href: "/explore", label: "Explore" },
                 { href: "/about", label: "About" },
                 { href: "/contact", label: "Contact" },
+                {
+                  href: "/register",
+                  label: session.user.role === "startup_owner" && "Register",
+                },
               ].map(({ href, label }) => (
                 <motion.li
                   key={href}
@@ -92,43 +88,16 @@ function Header({ session }: { session: Session }) {
                   </Link>
                 </motion.li>
               ))}
-
-              {/* Profile Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Avatar>
-                    <AvatarImage
-                      src={`https://ik.imagekit.io/startuppubdir${session.user.profilePicture}`}
-                    />
-                    <AvatarFallback>
-                      {getInitials(session.user.fullName)}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="bg-gray-800 text-white w-48 rounded-md shadow-lg"
-                >
-                  <DropdownMenuItem>
-                    <Link
-                      href="/profile"
-                      className="w-full block px-4 py-2 hover:bg-gray-700 transition"
-                    >
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <button
-                      onClick={async () => {
-                        await signOut();
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-red-600 transition"
-                    >
-                      Logout
-                    </button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Link href={"/profile"}>
+                <Avatar>
+                  <AvatarImage
+                    src={`https://ik.imagekit.io/startuppubdir${session.user.profilePicture}`}
+                  />
+                  <AvatarFallback>
+                    {getInitials(session.user.fullName)}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
             </ul>
           </nav>
         </motion.div>
