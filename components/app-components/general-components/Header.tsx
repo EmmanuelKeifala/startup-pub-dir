@@ -3,27 +3,30 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 import { RocketIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
+import { signOut } from "@/auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-function Header() {
+function Header({ session }: { session: Session }) {
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  const { data: session } = useSession();
-
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
       setScrolled(currentScrollY > 20);
       setVisible(currentScrollY < lastScrollY || currentScrollY < 100);
-
       setLastScrollY(currentScrollY);
     };
 
@@ -48,6 +51,7 @@ function Header() {
             scrolled ? "bg-black/80 shadow-xl" : "bg-black/50"
           )}
         >
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <motion.div
               initial={{ rotate: 0 }}
@@ -61,6 +65,7 @@ function Header() {
             </span>
           </Link>
 
+          {/* Navigation */}
           <nav className="flex-1 flex justify-end">
             <ul className="flex flex-row items-center gap-6">
               {[
@@ -68,10 +73,6 @@ function Header() {
                 { href: "/explore", label: "Explore" },
                 { href: "/about", label: "About" },
                 { href: "/contact", label: "Contact" },
-                {
-                  href: `${session?.user ? "/profile" : "/sign-in"}`,
-                  label: `${session?.user ? "Profile" : "Sign In"}`,
-                },
               ].map(({ href, label }) => (
                 <motion.li
                   key={href}
@@ -91,12 +92,43 @@ function Header() {
                   </Link>
                 </motion.li>
               ))}
-              <Link href={"/profile"}>
-                <Avatar>
-                  <AvatarImage src="XXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              </Link>
+
+              {/* Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Avatar>
+                    <AvatarImage
+                      src={`https://ik.imagekit.io/startuppubdir${session.user.profilePicture}`}
+                    />
+                    <AvatarFallback>
+                      {getInitials(session.user.fullName)}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="bg-gray-800 text-white w-48 rounded-md shadow-lg"
+                >
+                  <DropdownMenuItem>
+                    <Link
+                      href="/profile"
+                      className="w-full block px-4 py-2 hover:bg-gray-700 transition"
+                    >
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <button
+                      onClick={async () => {
+                        await signOut();
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-red-600 transition"
+                    >
+                      Logout
+                    </button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </ul>
           </nav>
         </motion.div>
