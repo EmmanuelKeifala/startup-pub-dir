@@ -5,12 +5,15 @@ import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { RocketIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 function Header() {
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,6 +57,10 @@ function Header() {
                 { href: "/explore", label: "Explore" },
                 { href: "/about", label: "About" },
                 { href: "/contact", label: "Contact" },
+                {
+                  href: `${session?.user ? "/profile" : "/sign-in"}`,
+                  label: `${session?.user ? "Profile" : "Sign In"}`,
+                },
               ].map(({ href, label }) => (
                 <li key={href}>
                   <Link
