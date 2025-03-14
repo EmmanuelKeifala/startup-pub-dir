@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { RocketIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 function Header() {
   const pathName = usePathname();
@@ -27,22 +29,31 @@ function Header() {
   }, [lastScrollY]);
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 w-full transition-transform duration-300 ease-in-out",
-        visible ? "translate-y-0" : "-translate-y-full"
-      )}
+    <motion.header
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: visible ? 0 : -100, opacity: visible ? 1 : 0 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="fixed top-0 left-0 right-0 z-50 w-full"
     >
       <div className="mx-auto max-w-7xl py-4 flex justify-center items-center">
-        <div
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
           className={cn(
             "relative flex items-center justify-between backdrop-blur-lg rounded-full shadow-lg transition-all duration-300 px-8 py-2 w-full max-w-5xl",
-            scrolled ? "bg-black/70" : "bg-black/40"
+            scrolled ? "bg-black/80 shadow-xl" : "bg-black/50"
           )}
         >
-          <Link href="/" className="flex items-center gap-2">
-            <RocketIcon size={24} className="text-blue-500" />
-            <span className="text-lg md:text-xl font-bold text-white">
+          <Link href="/" className="flex items-center gap-3">
+            <motion.div
+              initial={{ rotate: 0 }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            >
+              <RocketIcon size={24} className="text-blue-500" />
+            </motion.div>
+            <span className="text-lg md:text-xl font-bold text-white tracking-wide">
               Startup Pub
             </span>
           </Link>
@@ -55,23 +66,35 @@ function Header() {
                 { href: "/about", label: "About" },
                 { href: "/contact", label: "Contact" },
               ].map(({ href, label }) => (
-                <li key={href}>
+                <motion.li
+                  key={href}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <Link
                     href={href}
                     className={cn(
                       "text-sm font-medium tracking-wide transition-colors duration-200 hover:text-white",
-                      pathName === href ? "text-white" : "text-gray-300"
+                      pathName === href
+                        ? "text-white border-b-2 border-blue-500"
+                        : "text-gray-300"
                     )}
                   >
                     {label}
                   </Link>
-                </li>
+                </motion.li>
               ))}
+              <Link href={"/profile"}>
+                <Avatar>
+                  <AvatarImage src="XXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </Link>
             </ul>
           </nav>
-        </div>
+        </motion.div>
       </div>
-    </header>
+    </motion.header>
   );
 }
 
