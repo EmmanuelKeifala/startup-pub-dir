@@ -2,6 +2,9 @@
 import React, { ReactNode } from "react";
 import { RocketIcon } from "lucide-react";
 import dynamic from "next/dynamic";
+import { redirect } from "next/navigation";
+
+import { useSession } from "next-auth/react";
 
 // Dynamically import Lottie to prevent SSR issues
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
@@ -9,6 +12,10 @@ const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import authAnimation from "@/public/animations/auth-animation.json";
 
 function Layout({ children }: { children: ReactNode }) {
+  const { data: session } = useSession();
+  if (session?.user) {
+    redirect("/");
+  }
   return (
     <main className="auth-container">
       {/* Authentication Form Section */}
