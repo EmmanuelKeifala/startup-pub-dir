@@ -1,6 +1,6 @@
-import { Startup } from "@/dummy";
 import React from "react";
 import { StartUpCard } from "./index";
+import { Startup } from "@/types/general";
 
 function StartUpList({
   startups,

@@ -1,28 +1,23 @@
-import { Startup } from "@/dummy";
 import { Rocket, Star } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import { StartUpCover } from "./index";
+import { Startup } from "@/types/general";
 
-function StartUpOverview({
-  category,
-  // contact,
-  description,
-  name,
-  rating,
-  // reviews,
-  logo,
-  colors,
-}: Startup) {
+function StartUpOverview(startUp: Startup) {
+  const { name, description, logo, rating, companyColors, categoryName } =
+    startUp;
+
+  const color = companyColors?.split(",")[0];
   return (
     <section className="start-up-overview">
       <div className="flex flex-1 flex-col gap-5">
         <h1>{name}</h1>
 
-        <div className="start-up-info">
+        <div className="start-up-info flex flex-col">
           <p>
-            Category{" "}
-            <span className="font-semibold text-light-200">{category}</span>
+            Category:{" "}
+            <span className="font-semibold text-light-200">{categoryName}</span>
           </p>
 
           <div className="flex flex-row gap-1 items-center">
@@ -44,15 +39,15 @@ function StartUpOverview({
           <StartUpCover
             variant="medium"
             className="z-10"
-            accentColor={colors.primaryColor}
-            coverImage={logo}
+            accentColor={color as string}
+            coverImage={logo as string}
           />
 
           <div className="absolute left-16 top-10 rotate-13 opacity-40 max-sm:hidden">
             <StartUpCover
               variant="medium"
-              accentColor={colors.primaryColor}
-              coverImage={logo}
+              accentColor={color as string}
+              coverImage={logo as string}
             />
           </div>
         </div>

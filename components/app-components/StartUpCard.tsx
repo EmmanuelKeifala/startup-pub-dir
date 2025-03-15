@@ -1,23 +1,12 @@
-import { Startup } from "@/dummy";
 import Link from "next/link";
 import React from "react";
 import { StartUpCover } from "./index";
 import { cn } from "@/lib/utils";
+import { Startup } from "@/types/general";
 
-function StartUpCard({
-  id,
-  category,
-  colors,
-  contact,
-  description,
-  location,
-  logo,
-  name,
-  rating,
-  reviews,
-  video,
-  website,
-}: Startup) {
+function StartUpCard({ id, categoryName, companyColors, logo, name }: Startup) {
+  const color = companyColors?.split(",")[0];
+
   return (
     <li className="xs:w-52 w-full">
       <Link
@@ -25,14 +14,14 @@ function StartUpCard({
         className="w-full flex flex-col items-center"
       >
         <StartUpCover
-          accentColor={colors.primaryColor}
-          coverImage={logo}
+          accentColor={color as string}
+          coverImage={logo as string}
           variant="regular"
         />
 
         <div className="mt-4 xs:mx-w-40">
           <p className="start-up_name ">{name}</p>
-          <p className="start-up_category">{category}</p>
+          <p className="start-up_category">{categoryName}</p>
         </div>
       </Link>
     </li>

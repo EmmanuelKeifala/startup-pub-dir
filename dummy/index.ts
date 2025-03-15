@@ -20,7 +20,7 @@ export interface Startup {
   };
 }
 
-const startups: Startup[] = [
+const startupsDummy: Startup[] = [
   {
     id: 1,
     name: "SaloneTech Solutions",
@@ -159,4 +159,4 @@ const startups: Startup[] = [
   },
 ];
 
-export default startups;
+export default startupsDummy;

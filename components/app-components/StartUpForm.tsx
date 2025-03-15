@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { registerStartUpSchema } from "@/lib/validations";
 import FileUpload from "./FileUpload";
+import { Loader } from "lucide-react";
 
 const FIELD_NAMES = {
   name: "Startup Name",
@@ -70,29 +71,33 @@ interface StartupFormProps {
 function StartupForm({ categories, onSubmit }: StartupFormProps) {
   const router = useRouter();
   const [companyColors, setCompanyColors] = useState<string[]>([""]);
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<StartupFormValues>({
     resolver: zodResolver(registerStartUpSchema),
     defaultValues,
   });
 
   const handleSubmit = async (data: StartupFormValues) => {
-    // No prefixing, just use the data as-is
-    console.log(data);
-
     try {
+      setIsLoading(true);
       const result = await onSubmit(data);
-
       if (result?.success) {
         toast.success("Startup has been successfully added");
+        setIsLoading(false);
         router.push("/startups");
       } else {
+        setIsLoading(false);
+
         console.log(result?.error);
         toast.error(result?.error || "Something went wrong");
       }
     } catch (error) {
+      setIsLoading(false);
+
       console.error("Form submission error:", error);
       toast.error("Failed to submit form");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -328,12 +333,23 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
                       <FormItem>
                         <FormLabel>{FIELD_NAMES.video}</FormLabel>
                         <FormControl>
-                          <Input
+                          {/* <Input
                             type="url"
                             placeholder="https://youtube.com/watch?v=..."
                             className="form-input"
                             {...field}
-                          />
+                          /> */}
+
+                          <div className="h-32 w-full">
+                            <FileUpload
+                              type="video"
+                              accept="video/*"
+                              placeholder="Upload Logo"
+                              folder="videos"
+                              variant="dark"
+                              onFileChange={field.onChange}
+                            />
+                          </div>
                         </FormControl>
                         <FormDescription className="text-xs">
                           Link to a video introducing your startup
@@ -398,7 +414,7 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
 
             <div className="flex justify-end">
               <Button type="submit" className="form-btn w-32 cursor-pointer">
-                Submit
+                {!isLoading ? "Submit" : <Loader className="animate-spin" />}
               </Button>
             </div>
           </form>
