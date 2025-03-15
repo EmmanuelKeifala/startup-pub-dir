@@ -27,3 +27,24 @@ export const signInSchema = z.object({
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
 });
+
+export const registerStartUpSchema = z.object({
+  name: z.string().min(4, { message: "Name is required" }),
+  categoryId: z.string().uuid().optional(),
+  description: z.string().min(4, { message: "Description is required" }),
+  location: z.string().min(4, { message: "Location is required" }),
+  website: z.string().url().optional(),
+  contact: z.object({
+    phone: z.string().max(20).optional(),
+    email: z.string().email().optional(),
+    social: z.string().optional(),
+  }),
+  rating: z.number().int().min(0).max(5).optional().default(0),
+  logo: z.string().url().optional(),
+  video: z.string().url().optional(),
+  companyColors: z.string().max(50).optional(), // Matches DB `varchar(50)`
+  status: z
+    .enum(["pending", "approved", "rejected"])
+    .optional()
+    .default("pending"),
+});

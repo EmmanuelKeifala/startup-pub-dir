@@ -27,7 +27,7 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 import { z, ZodType } from "zod";
-import ImageUpload from "../ImageUpload";
+import FileUpload from "../FileUpload";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -104,7 +104,14 @@ function AuthForm<T extends FieldValues>({
                   </FormLabel>
                   <FormControl>
                     {field.name === "profilePicture" ? (
-                      <ImageUpload onFileChange={field.onChange} />
+                      <FileUpload
+                        type="image"
+                        accept="image/*"
+                        placeholder="Upload profile picture"
+                        folder="profilePictures"
+                        variant="dark"
+                        onFileChange={field.onChange}
+                      />
                     ) : field.name === "role" ? (
                       <Select
                         onValueChange={field.onChange}
