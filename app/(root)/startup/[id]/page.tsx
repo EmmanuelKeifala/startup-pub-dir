@@ -14,11 +14,19 @@ import {
   Activity,
   Mail,
   Phone,
+  Edit,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 async function StartUp({ params }: { params: { id: string } }) {
   const { id } = params;
   const session = await auth();
+
+  const isOwner = await db
+    .select()
+    .from(startups)
+    .where(eq(startups.id, session?.user.id as string))
+    .limit(1);
 
   // Fetch data based on id
   const [startUpDetails] = await db
@@ -47,8 +55,26 @@ async function StartUp({ params }: { params: { id: string } }) {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl text-white">
-      {/* Overview Section */}
-      <StartUpOverview {...startUpDetails} />
+      {/* Overview Section with positioned Edit button */}
+      <div className="relative gap-4">
+        <StartUpOverview {...startUpDetails} />
+
+        {isOwner && (
+          <div className="absolute ">
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="bg-blue-500/20 hover:bg-blue-500/30 border-blue-500/50 text-blue-300 flex items-center gap-1"
+            >
+              <Link href={`/startup/${id}/edit`}>
+                <Edit className="w-4 h-4 mr-1" />
+                Edit Startup
+              </Link>
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Details Section */}
       <div className="mt-12 text-white grid grid-cols-1 lg:grid-cols-3 gap-8">

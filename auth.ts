@@ -26,7 +26,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user = await db
           .select()
           .from(users)
-          .where(eq(users.email, email.toString()))
+          .where(eq(users.email, email as string))
           .limit(1);
 
         if (!user) {
@@ -34,7 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const isPasswordMatch = await bcryptjs.compare(
-          password.toString(),
+          password as string,
           user[0].password
         );
 
@@ -59,6 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (token.email) {
         session.user = {
+          id: token.id as string,
           email: token.email as string,
           profilePicture: token.profilePicture as string,
           role: token.role as "admin" | "startup_owner" | "user",

@@ -66,9 +66,16 @@ const defaultValues: StartupFormValues = {
 interface StartupFormProps {
   categories: { id: string; name: string }[];
   onSubmit: any;
+  defaultValues?: any;
+  type: string;
 }
 
-function StartupForm({ categories, onSubmit }: StartupFormProps) {
+function StartupForm({
+  categories,
+  onSubmit,
+  defaultValues,
+  type = "create",
+}: StartupFormProps) {
   const router = useRouter();
   const [companyColors, setCompanyColors] = useState<string[]>([""]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -82,9 +89,14 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
       setIsLoading(true);
       const result = await onSubmit(data);
       if (result?.success) {
-        toast.success("Startup has been successfully added");
+        if (type === "create") {
+          toast.success("Startup has been successfully added");
+          //  TODO: push the user to the startup they have just created
+        } else {
+          toast.success("Startup has been successfully updated");
+        }
+        router.push(`/`);
         setIsLoading(false);
-        router.push("/startups");
       } else {
         setIsLoading(false);
 
