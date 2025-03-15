@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import db from "@/database/drizzle";
-import { startupCategories, startups } from "@/database/schema";
+import { reviews, startupCategories, startups, users } from "@/database/schema";
 import { StartUpOverview } from "@/components/app-components";
 import StartUpVideo from "@/components/app-components/StartUpVideo";
 import Link from "next/link";
@@ -17,6 +17,7 @@ import {
   Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import StartupReviews, { Review } from "@/components/app-components/StartUpReview";
 
 async function StartUp({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -51,6 +52,19 @@ async function StartUp({ params }: { params: { id: string } }) {
     .where(eq(startups.id, id));
 
   if (!startUpDetails) redirect("/404");
+
+  const initialReviews = await db.select({
+    reviewId: reviews.id,
+      rating: reviews.rating,
+      comment: reviews.comment,
+      createdAt: reviews.createdAt,
+      userId: users.id,
+      name: users.fullname,
+      image: users.profilePicture,
+      id: reviews.id,
+      startupId: reviews.startupId
+  }).from(reviews).innerJoin(users, eq(reviews.userId, users.id)).where(eq(reviews.startupId, startUpDetails.id))
+
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl text-white">
@@ -269,6 +283,8 @@ async function StartUp({ params }: { params: { id: string } }) {
                   </div>
                 </div>
               )}
+
+              <StartupReviews companyColors="" currentUserId={session?.user.id as string} initialReviews={initialReviews as Review[]} startupId={startUpDetails.id}  />
             </div>
           </div>
         </div>

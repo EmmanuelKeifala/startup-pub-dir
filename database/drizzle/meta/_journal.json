@@ -8,6 +8,27 @@
       "when": 1741834140967,
       "tag": "0000_sweet_madelyne_pryor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1742073884322,
+      "tag": "0001_right_mysterio",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1742074102553,
+      "tag": "0002_magical_ultron",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1742074230062,
+      "tag": "0003_kind_stranger",
+      "breakpoints": true
     }
   ]
 }

@@ -32,6 +32,7 @@ function RegisterStartUp() {
 
       <div className="w-full">
         <StartupForm
+        type="create"
           categories={categories}
           onSubmit={registerStartUp}
         />

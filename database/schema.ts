@@ -6,6 +6,7 @@ import {
   timestamp,
   text,
   pgEnum,
+  real,
 } from "drizzle-orm/pg-core";
 
 export const STARTUP_STATUS_ENUM = pgEnum("startup_status", [
@@ -46,7 +47,7 @@ export const startups = pgTable("startups", {
   phone: varchar("phone", { length: 20 }),
   email: text("email"),
   social: text("social"),
-  rating: integer("rating").default(0),
+  rating: real("rating").default(0),
   logo: text("logo"),
   video: text("video"),
   companyColors: varchar("company_colors", { length: 50 }),
