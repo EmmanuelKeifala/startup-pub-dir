@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StartupForm from "@/components/app-components/StartUpForm";
+import { useSession } from "next-auth/react";
 
 function Edit() {
   const params = useParams();
@@ -140,6 +141,7 @@ function Edit() {
         Edit Startup Profile
       </h1>
       <StartupForm
+        type="update"
         categories={categories}
         onSubmit={handleSubmit}
         defaultValues={prepareFormData(startupData)}

@@ -21,12 +21,14 @@ import { Button } from "@/components/ui/button";
 async function StartUp({ params }: { params: { id: string } }) {
   const { id } = params;
   const session = await auth();
-
-  const isOwner = await db
-    .select()
-    .from(startups)
-    .where(eq(startups.id, session?.user.id as string))
-    .limit(1);
+  let isOwner;
+  if (session?.user) {
+    isOwner = await db
+      .select()
+      .from(startups)
+      .where(eq(startups.id, session.user.id as string))
+      .limit(1);
+  }
 
   // Fetch data based on id
   const [startUpDetails] = await db

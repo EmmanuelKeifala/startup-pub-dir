@@ -8,8 +8,11 @@ import { RocketIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 
-function Header({ session }: { session: Session }) {
+function Header() {
+  const { data: session } = useSession();
+
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -67,7 +70,11 @@ function Header({ session }: { session: Session }) {
                 { href: "/contact", label: "Contact" },
                 {
                   href: "/register",
-                  label: session.user.role === "startup_owner" && "Register",
+                  label: session?.user.role === "startup_owner" && "Register",
+                },
+                {
+                  href: "/sign-in",
+                  label: !session?.user.role && "Sign In",
                 },
               ].map(({ href, label }) => (
                 <motion.li
@@ -88,16 +95,18 @@ function Header({ session }: { session: Session }) {
                   </Link>
                 </motion.li>
               ))}
-              <Link href={"/profile"}>
-                <Avatar>
-                  <AvatarImage
-                    src={`https://ik.imagekit.io/startuppubdir${session.user.profilePicture}`}
-                  />
-                  <AvatarFallback>
-                    {getInitials(session.user.fullName)}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
+              {session && (
+                <Link href={"/profile"}>
+                  <Avatar>
+                    <AvatarImage
+                      src={`https://ik.imagekit.io/startuppubdir${session?.user.profilePicture}`}
+                    />
+                    <AvatarFallback>
+                      getInitials(session?.user.fullName as string)
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
+              )}
             </ul>
           </nav>
         </motion.div>
