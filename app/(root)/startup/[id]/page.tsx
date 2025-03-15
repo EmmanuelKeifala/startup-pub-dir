@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import StartupReviews, { Review } from "@/components/app-components/StartUpReview";
 
 async function StartUp({ params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } = await params;
   const session = await auth();
   const isOwner = await db
     .select()

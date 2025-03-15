@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { cn, getInitials } from "@/lib/utils";
-import { RocketIcon } from "lucide-react";
+import { RocketIcon, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Session } from "next-auth";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 function Header() {
   const { data: session } = useSession();
@@ -17,6 +17,10 @@ function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  const handleLogOut = async () => {
+    await signOut();
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,6 +72,7 @@ function Header() {
                 { href: "/startUps", label: "StartUps" },
                 { href: "/about", label: "About" },
                 { href: "/contact", label: "Contact" },
+
                 {
                   href: "/register",
                   label: session?.user.role === "startup_owner" && "Register",
@@ -76,34 +81,51 @@ function Header() {
                   href: "/sign-in",
                   label: !session?.user.role && "Sign In",
                 },
-              ].map(({ href, label }) => (
-                <motion.li
-                  key={href}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Link
-                    href={href}
-                    className={cn(
-                      "text-sm font-medium tracking-wide transition-colors duration-200 hover:text-white",
-                      pathName === href
-                        ? "text-white border-b-2 border-blue-500"
-                        : "text-gray-300"
-                    )}
-                  >
-                    {label}
-                  </Link>
-                </motion.li>
-              ))}
+              ].map(
+                ({ href, label }) =>
+                  label && (
+                    <motion.li
+                      key={href}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Link
+                        href={href}
+                        className={cn(
+                          "text-sm font-medium tracking-wide transition-colors duration-200 hover:text-white",
+                          pathName === href
+                            ? "text-white border-b-2 border-blue-500"
+                            : "text-gray-300"
+                        )}
+                      >
+                        {label}
+                      </Link>
+                    </motion.li>
+                  )
+              )}
               {session && (
-                <Link href={"/profile"}>
-                  <Avatar>
-                    <AvatarImage src={`${session?.user.profilePicture}`} />
-                    <AvatarFallback>
-                      getInitials(session?.user.fullName as string)
-                    </AvatarFallback>
-                  </Avatar>
-                </Link>
+                <>
+                  <Link href={"/profile"}>
+                    <Avatar>
+                      <AvatarImage src={`${session?.user.profilePicture}`} />
+                      <AvatarFallback>
+                        {getInitials(session?.user.fullName as string)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
+                  <motion.li
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <button
+                      onClick={handleLogOut}
+                      className="flex items-center gap-2 text-sm font-medium tracking-wide text-gray-300 transition-colors duration-200 hover:text-white"
+                    >
+                      <LogOut size={16} />
+                      <span>Logout</span>
+                    </button>
+                  </motion.li>
+                </>
               )}
             </ul>
           </nav>

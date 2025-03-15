@@ -14,7 +14,6 @@ function StartUpOverview(startUp: Startup) {
   const color = companyColors?.split(",")[0];
 
   const pathName = usePathname();
-  console.log(pathName);
   return (
     <section className="start-up-overview">
       <div className="flex flex-1 flex-col gap-5">

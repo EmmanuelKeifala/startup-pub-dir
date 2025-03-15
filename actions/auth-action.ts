@@ -5,6 +5,7 @@ import { users } from "@/database/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { signIn } from "@/auth";
+import { revalidatePath } from "next/cache";
 
 type AuthCredentials = {
   email: string;
@@ -13,7 +14,6 @@ type AuthCredentials = {
   profilePicture: string;
   role: "admin" | "startup_owner" | "user";
 };
-
 
 export const signInWithCredentials = async (
   params: Pick<AuthCredentials, "email" | "password">
@@ -30,6 +30,7 @@ export const signInWithCredentials = async (
       return { success: false, error: result.error };
     }
 
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     console.log("[SIGN_IN_ERROR]: ", error);
@@ -60,10 +61,10 @@ export const signUp = async (params: AuthCredentials) => {
     });
 
     await signInWithCredentials({ email, password });
+    revalidatePath("/", "layout");
 
     return { success: true };
   } catch (error) {
     console.log("[SIGN_UP_ERROR]: ", error);
   }
-  
 };

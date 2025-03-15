@@ -110,7 +110,7 @@ const ReviewInput: React.FC<ReviewInputProps> = ({
             const starValue = index + 1;
             return (
               <button
-                key={index}
+                key={index.toString()+2}
                 type="button"
                 className="focus:outline-none transition-colors duration-200"
                 onClick={() => setRating(starValue)}
@@ -195,8 +195,8 @@ const ReviewItem: React.FC<{
 
   
   
- 
-  const userName = name || "Anonymous User";
+  const userAvatar = image
+    const userName = name || "Anonymous User";
   
   return (
     <div className="rounded-lg shadow-sm p-4 mb-4" style={{
@@ -205,8 +205,8 @@ const ReviewItem: React.FC<{
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <Avatar>
-            {image ? (
-              <img src={image} alt={userName} />
+            {userAvatar ? (
+              <img src={userAvatar} alt={userName} />
             ) : (
               <div className="bg-gray-700 h-full w-full flex items-center justify-center text-white">
                 {userName.charAt(0).toUpperCase()}
@@ -222,7 +222,7 @@ const ReviewItem: React.FC<{
         <div className="flex items-center">
           {[...Array(5)].map((_, index) => (
             <Star
-              key={index}
+              key={index.toString()+1}
               size={16}
               fill={index < rating ? accentColor : "transparent"}
               color={index < rating ? accentColor : "#D1D5DB"}
@@ -282,7 +282,7 @@ function StartupReviews({
       const response = await fetch(`/api/reviews?startupId=${startupId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("data.reviews: ", data.reviews)
+      
         setReviews(data.reviews || []);
       } else {
         
@@ -307,7 +307,7 @@ function StartupReviews({
     fetchReviews();
   };
 
-  console.log("reviews: ",reviews)
+ 
   
   return (
     <div className="startup-reviews w-full max-w-3xl mx-auto">
