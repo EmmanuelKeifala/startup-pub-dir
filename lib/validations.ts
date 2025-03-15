@@ -30,21 +30,16 @@ export const signInSchema = z.object({
 
 export const registerStartUpSchema = z.object({
   name: z.string().min(4, { message: "Name is required" }),
-  categoryId: z.string().uuid().optional(),
+  categoryId: z.string().uuid(),
   description: z.string().min(4, { message: "Description is required" }),
   location: z.string().min(4, { message: "Location is required" }),
-  website: z.string().url().optional(),
+  website: z.string().url(),
   contact: z.object({
-    phone: z.string().max(20).optional(),
-    email: z.string().email().optional(),
-    social: z.string().optional(),
+    phone: z.string().max(20),
+    email: z.string().email(),
+    social: z.string(),
   }),
-  rating: z.number().int().min(0).max(5).optional().default(0),
-  logo: z.string().url().optional(),
-  video: z.string().url().optional(),
-  companyColors: z.string().max(50).optional(), // Matches DB `varchar(50)`
-  status: z
-    .enum(["pending", "approved", "rejected"])
-    .optional()
-    .default("pending"),
+  logo: z.string().url(),
+  video: z.string().url(),
+  companyColors: z.string().max(50),
 });

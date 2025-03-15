@@ -8,92 +8,92 @@ import db from "@/database/drizzle";
 import { startups, users } from "@/database/schema";
 import { eq } from "drizzle-orm";
 
-type FormDataTypes = {
-  name: string;
-  categoryId: string;
-  description: string;
-  location: string;
-  website: string;
-  phone: string;
-  email: string;
-  social: string;
-  logo: string;
-  video: string;
-  companyColors: string;
-};
-
-export async function registerStartUp(formData: FormDataTypes) {
-  const {
-    categoryId,
-    companyColors,
-    description,
-    email,
-    location,
-    logo,
-    name,
-    phone,
-    social,
-    video,
-    website,
-  } = formData;
-  // Get the current user session
-  const session = await auth();
-
-  if (!session?.user) {
-    return {
-      success: false,
-      error: "You must be logged in to register a startup",
-    };
-  }
-
-  if (session?.user?.role !== "startup_owner") {
-    return {
-      success: false,
-      error: "You are not logged in as an owner",
-    };
-  }
-
-  const userExist = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
-
-  if (userExist.length < 0) {
-    return { success: false, error: "User not found" };
-  }
-
-  const startUpExistForUser = await db
-    .select()
-    .from(startups)
-    .where(eq(startups.ownerId, userExist[0].id))
-    .limit(1);
-  if (startUpExistForUser.length > 0) {
-    return { success: false, error: "You already have a startup" };
-  }
-
+export const registerStartUp = async (
+  formData: z.infer<typeof registerStartUpSchema>
+) => {
   try {
+    // Get the current user session
+    const session = await auth();
+
+    if (!session?.user) {
+      return {
+        success: false,
+        error: "You must be logged in to register a startup",
+      };
+    }
+
+    if (session?.user?.role !== "startup_owner") {
+      return {
+        success: false,
+        error: "You are not logged in as an owner",
+      };
+    }
+
+    // Find the current user in the database
+    const userExist = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, session.user.email as string))
+      .limit(1);
+
+    if (userExist.length === 0) {
+      return { success: false, error: "User not found" };
+    }
+
+    // Check if the user already has a startup
+    const startUpExistForUser = await db
+      .select()
+      .from(startups)
+      .where(eq(startups.ownerId, userExist[0].id))
+      .limit(1);
+
+    if (startUpExistForUser.length > 0) {
+      return { success: false, error: "You already have a startup" };
+    }
+
+    const {
+      name,
+      categoryId,
+      description,
+      location,
+      website,
+      contact,
+      logo,
+      video,
+      companyColors,
+    } = formData;
+
+    const colorArray = (companyColors || "")
+      .split(",")
+      .map((color) => color.trim())
+      .filter(Boolean);
+    const primaryColor = colorArray[0] || "";
+    const secondaryColor = colorArray[1] || colorArray[0] || "";
+
+    // Insert the startup into the database
     await db.insert(startups).values({
       name,
       categoryId: categoryId ? categoryId : null,
       description,
       location,
       website,
-      contact: {
-        phone,
-        email,
-        social,
-      },
+      phone: contact.phone,
+      email: contact.email,
+      social: contact.social,
       logo,
       video,
-      colors: {
-        primaryColor: companyColors,
-        secondaryColor: companyColors,
-      },
+      companyColors: `${primaryColor},${secondaryColor}`,
       ownerId: userExist[0].id,
     });
 
-    revalidatePath("/startups");
+    revalidatePath("/");
     return { success: true };
-  } catch (error) {}
-}
+  } catch (error) {
+    console.error("Error registering startup:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to register startup",
+    };
+  }
+};

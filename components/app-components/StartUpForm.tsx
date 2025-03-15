@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -42,14 +42,6 @@ const FIELD_NAMES = {
   status: "Status",
 };
 
-// Field prefixes for better user guidance
-const FIELD_PREFIXES = {
-  website: "https://",
-  "contact.phone": "+232",
-  "contact.social": "https://",
-  video: "https://",
-};
-
 // Define the type for our form values
 type StartupFormValues = z.infer<typeof registerStartUpSchema>;
 
@@ -65,11 +57,9 @@ const defaultValues: StartupFormValues = {
     email: "",
     social: "",
   },
-  rating: 0,
   logo: "",
   video: "",
   companyColors: "",
-  status: "pending",
 };
 
 interface StartupFormProps {
@@ -87,41 +77,22 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
   });
 
   const handleSubmit = async (data: StartupFormValues) => {
-    // Handle prefixes for URL and phone fields
-    const formattedData = {
-      ...data,
-      website:
-        data.website && !data.website.startsWith(FIELD_PREFIXES.website)
-          ? `${FIELD_PREFIXES.website}${data.website}`
-          : data.website,
-      contact: {
-        ...data.contact,
-        phone:
-          data.contact.phone &&
-          !data.contact.phone.startsWith(FIELD_PREFIXES["contact.phone"])
-            ? `${FIELD_PREFIXES["contact.phone"]}${data.contact.phone}`
-            : data.contact.phone,
-        social:
-          data.contact.social &&
-          !data.contact.social.startsWith(FIELD_PREFIXES["contact.social"])
-            ? `${FIELD_PREFIXES["contact.social"]}${data.contact.social}`
-            : data.contact.social,
-      },
-      video:
-        data.video && !data.video.startsWith(FIELD_PREFIXES.video)
-          ? `${FIELD_PREFIXES.video}${data.video}`
-          : data.video,
-    };
+    // No prefixing, just use the data as-is
+    console.log(data);
 
-    console.log(formattedData);
-    const result = await onSubmit(formattedData);
+    try {
+      const result = await onSubmit(data);
 
-    if (result?.success) {
-      toast.success("Startup has been successfully added");
-      router.push("/startups");
-    } else {
-      console.log(result?.error);
-      toast.error(result?.error || "Something went wrong");
+      if (result?.success) {
+        toast.success("Startup has been successfully added");
+        router.push("/startups");
+      } else {
+        console.log(result?.error);
+        toast.error(result?.error || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast.error("Failed to submit form");
     }
   };
 
@@ -137,11 +108,6 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
 
     // Update the form value with comma-separated colors
     form.setValue("companyColors", updatedColors.filter(Boolean).join(", "));
-  };
-
-  // Handle input masks for fields with prefixes
-  const stripPrefix = (value: string, prefix: string) => {
-    return value.startsWith(prefix) ? value.substring(prefix.length) : value;
   };
 
   return (
@@ -234,21 +200,12 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
                     <FormItem>
                       <FormLabel>{FIELD_NAMES.website}</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                            {FIELD_PREFIXES.website}
-                          </div>
-                          <Input
-                            type="url"
-                            className="form-input pl-20"
-                            placeholder="example.com"
-                            value={stripPrefix(
-                              field.value as string,
-                              FIELD_PREFIXES.website
-                            )}
-                            onChange={(e) => field.onChange(e.target.value)}
-                          />
-                        </div>
+                        <Input
+                          type="url"
+                          className="form-input"
+                          placeholder="https://example.com"
+                          {...field}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -305,20 +262,11 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
                     <FormItem>
                       <FormLabel>{FIELD_NAMES["contact.phone"]}</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                            {FIELD_PREFIXES["contact.phone"]}
-                          </div>
-                          <Input
-                            className="form-input pl-14"
-                            placeholder="555-123-4567"
-                            value={stripPrefix(
-                              field.value as string,
-                              FIELD_PREFIXES["contact.phone"]
-                            )}
-                            onChange={(e) => field.onChange(e.target.value)}
-                          />
-                        </div>
+                        <Input
+                          className="form-input"
+                          placeholder="+232 555-123-4567"
+                          {...field}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -331,20 +279,11 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
                     <FormItem>
                       <FormLabel>{FIELD_NAMES["contact.social"]}</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                            {FIELD_PREFIXES["contact.social"]}
-                          </div>
-                          <Input
-                            className="form-input pl-20"
-                            placeholder="twitter.com/yourstartup"
-                            value={stripPrefix(
-                              field.value as string,
-                              FIELD_PREFIXES["contact.social"]
-                            )}
-                            onChange={(e) => field.onChange(e.target.value)}
-                          />
-                        </div>
+                        <Input
+                          className="form-input"
+                          placeholder="https://twitter.com/yourstartup"
+                          {...field}
+                        />
                       </FormControl>
                       <FormDescription className="text-xs">
                         Link to primary social media profile
@@ -389,21 +328,12 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
                       <FormItem>
                         <FormLabel>{FIELD_NAMES.video}</FormLabel>
                         <FormControl>
-                          <div className="relative">
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                              {FIELD_PREFIXES.video}
-                            </div>
-                            <Input
-                              type="url"
-                              placeholder="youtube.com/watch?v=..."
-                              className="form-input pl-20"
-                              value={stripPrefix(
-                                field.value as string,
-                                FIELD_PREFIXES.video
-                              )}
-                              onChange={(e) => field.onChange(e.target.value)}
-                            />
-                          </div>
+                          <Input
+                            type="url"
+                            placeholder="https://youtube.com/watch?v=..."
+                            className="form-input"
+                            {...field}
+                          />
                         </FormControl>
                         <FormDescription className="text-xs">
                           Link to a video introducing your startup
@@ -448,7 +378,7 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
                               type="button"
                               variant="outline"
                               onClick={addColorField}
-                              className=" text-black text-base"
+                              className="text-black text-base"
                             >
                               + Add Another Color
                             </Button>
@@ -466,21 +396,8 @@ function StartupForm({ categories, onSubmit }: StartupFormProps) {
               </div>
             </div>
 
-            {/* Hidden Admin Fields */}
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormControl>
-                    <Input type="hidden" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
             <div className="flex justify-end">
-              <Button type="submit" className="form-btn w-32">
+              <Button type="submit" className="form-btn w-32 cursor-pointer">
                 Submit
               </Button>
             </div>

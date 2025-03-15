@@ -1,4 +1,5 @@
 "use client";
+import { registerStartUp } from "@/actions/register-action";
 import StartupForm from "@/components/app-components/StartUpForm";
 import { RocketIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
@@ -30,7 +31,10 @@ function RegisterStartUp() {
       </div>
 
       <div className="w-full">
-        <StartupForm categories={categories} onSubmit={() => {}} />
+        <StartupForm
+          categories={categories}
+          onSubmit={registerStartUp}
+        />
       </div>
     </div>
   );
