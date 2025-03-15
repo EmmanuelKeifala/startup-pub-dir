@@ -98,9 +98,7 @@ function Header() {
               {session && (
                 <Link href={"/profile"}>
                   <Avatar>
-                    <AvatarImage
-                      src={`https://ik.imagekit.io/startuppubdir${session?.user.profilePicture}`}
-                    />
+                    <AvatarImage src={`${session?.user.profilePicture}`} />
                     <AvatarFallback>
                       getInitials(session?.user.fullName as string)
                     </AvatarFallback>

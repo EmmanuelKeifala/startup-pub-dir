@@ -67,6 +67,8 @@ function AuthForm<T extends FieldValues>({
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
+  const isLoading = form.formState.isSubmitting;
+
   const handleSubmit: SubmitHandler<T> = async (data) => {
     const result = await onSubmit(data);
 
@@ -144,7 +146,7 @@ function AuthForm<T extends FieldValues>({
             />
           ))}
 
-          <Button type="submit" className="form-btn">
+          <Button type="submit" className="form-btn" disabled={isLoading}>
             {type === "SIGN_UP" ? "Sign Up" : "Sign In"}
           </Button>
         </form>

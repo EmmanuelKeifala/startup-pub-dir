@@ -21,14 +21,11 @@ import { Button } from "@/components/ui/button";
 async function StartUp({ params }: { params: { id: string } }) {
   const { id } = params;
   const session = await auth();
-  let isOwner;
-  if (session?.user) {
-    isOwner = await db
-      .select()
-      .from(startups)
-      .where(eq(startups.id, session.user.id as string))
-      .limit(1);
-  }
+  const isOwner = await db
+    .select()
+    .from(startups)
+    .where(eq(startups.id, session?.user.id as string))
+    .limit(1);
 
   // Fetch data based on id
   const [startUpDetails] = await db
@@ -61,7 +58,7 @@ async function StartUp({ params }: { params: { id: string } }) {
       <div className="relative gap-4">
         <StartUpOverview {...startUpDetails} />
 
-        {isOwner && (
+        {isOwner?.length > 0 && (
           <div className="absolute ">
             <Button
               asChild
