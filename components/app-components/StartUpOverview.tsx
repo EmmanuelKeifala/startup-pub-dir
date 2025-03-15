@@ -1,14 +1,20 @@
+"use client";
 import { Rocket, Star } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
 import { StartUpCover } from "./index";
 import { Startup } from "@/types/general";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function StartUpOverview(startUp: Startup) {
-  const { name, description, logo, rating, companyColors, categoryName } =
+  const { name, description, logo, rating, companyColors, categoryName, id } =
     startUp;
 
   const color = companyColors?.split(",")[0];
+
+  const pathName = usePathname();
+  console.log(pathName);
   return (
     <section className="start-up-overview">
       <div className="flex flex-1 flex-col gap-5">
@@ -26,12 +32,19 @@ function StartUpOverview(startUp: Startup) {
           </div>
         </div>
 
-        <p className="start-up-description">{description}</p>
-
-        <Button className="start-up-overview_btn items-center">
-          <Rocket size={30} />
-          <p className="font-bebas-neue text-xl text-dark-100">Read More</p>
-        </Button>
+        {!pathName.includes("startup") && (
+          <>
+            <p className="start-up-description">{description}</p>
+            <Button className="start-up-overview_btn items-center">
+              <Link href={`/startup/${id}`} className="flex items-center gap-2">
+                <Rocket size={30} />
+                <p className="font-bebas-neue text-xl text-dark-100">
+                  Read More
+                </p>
+              </Link>
+            </Button>
+          </>
+        )}
       </div>
 
       <div className="relative flex flex-1 justify-center">
