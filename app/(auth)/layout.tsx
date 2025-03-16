@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 import authAnimation from "@/public/animations/auth-animation.json";
+import Link from "next/link";
 
 function Layout({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
@@ -21,7 +22,10 @@ function Layout({ children }: { children: ReactNode }) {
       {/* Authentication Form Section */}
       <section className="auth-form">
         <div className="auth-box">
-          <div className="flex flex-col md:flex-row gap-3 items-center justify-center">
+          <Link
+            className="flex flex-col md:flex-row gap-3 items-center justify-center"
+            href={"/"}
+          >
             <RocketIcon size={50} className="text-blue-500" />
             <div>
               <h1 className="text-3xl md:text-5xl font-bold">Startup Pub</h1>
@@ -29,7 +33,7 @@ function Layout({ children }: { children: ReactNode }) {
                 Discover and support startups in your area.
               </p>
             </div>
-          </div>
+          </Link>
 
           <div className="">{children}</div>
         </div>
