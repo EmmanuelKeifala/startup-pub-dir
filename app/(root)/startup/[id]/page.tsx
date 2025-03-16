@@ -17,9 +17,11 @@ import {
   Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import StartupReviews, { Review } from "@/components/app-components/StartUpReview";
+import StartupReviews, {
+  Review,
+} from "@/components/app-components/StartUpReview";
 
-async function StartUp({ params }: { params: { id: string } }) {
+async function StartUp({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
   const isOwner = await db
@@ -53,8 +55,9 @@ async function StartUp({ params }: { params: { id: string } }) {
 
   if (!startUpDetails) redirect("/404");
 
-  const initialReviews = await db.select({
-    reviewId: reviews.id,
+  const initialReviews = await db
+    .select({
+      reviewId: reviews.id,
       rating: reviews.rating,
       comment: reviews.comment,
       createdAt: reviews.createdAt,
@@ -62,9 +65,11 @@ async function StartUp({ params }: { params: { id: string } }) {
       name: users.fullname,
       image: users.profilePicture,
       id: reviews.id,
-      startupId: reviews.startupId
-  }).from(reviews).innerJoin(users, eq(reviews.userId, users.id)).where(eq(reviews.startupId, startUpDetails.id))
-
+      startupId: reviews.startupId,
+    })
+    .from(reviews)
+    .innerJoin(users, eq(reviews.userId, users.id))
+    .where(eq(reviews.startupId, startUpDetails.id));
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl text-white">
@@ -284,7 +289,12 @@ async function StartUp({ params }: { params: { id: string } }) {
                 </div>
               )}
 
-              <StartupReviews companyColors="" currentUserId={session?.user.id as string} initialReviews={initialReviews as Review[]} startupId={startUpDetails.id}  />
+              <StartupReviews
+                companyColors=""
+                currentUserId={session?.user.id as string}
+                initialReviews={initialReviews as Review[]}
+                startupId={startUpDetails.id}
+              />
             </div>
           </div>
         </div>
