@@ -1,5 +1,7 @@
 "use client";
-
+type UploadError = {
+  message: string;
+};
 import { IKImage, ImageKitProvider, IKUpload, IKVideo } from "imagekitio-next";
 import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -90,10 +92,10 @@ const FileUpload = ({
     progressContainer: "w-full h-2 rounded-full bg-gray-200 mt-3",
   };
 
-  const onError = (error: any) => {
+  const onError = (error: UploadError) => {
     console.error(error);
     toast.error(`${type} upload failed`, {
-      description: `Your ${type} could not be uploaded. Please try again.`,
+      description: `Your ${type} could not be uploaded. Please try again. ${error.message}`,
     });
   };
 
