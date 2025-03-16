@@ -46,28 +46,17 @@ const FIELD_NAMES = {
 // Define the type for our form values
 type StartupFormValues = z.infer<typeof registerStartUpSchema>;
 
-// Default values for the form
-const defaultValues: StartupFormValues = {
-  name: "",
-  categoryId: "",
-  description: "",
-  location: "",
-  website: "",
-  contact: {
-    phone: "",
-    email: "",
-    social: "",
-  },
-  logo: "",
-  video: "",
-  companyColors: "",
-};
+// Define the return type for the onSubmit function
+interface SubmitResult {
+  success: boolean;
+  error?: string;
+}
 
 interface StartupFormProps {
   categories: { id: string; name: string }[];
-  onSubmit: any;
-  defaultValues?: any;
-  type: string;
+  onSubmit: (data: StartupFormValues) => Promise<SubmitResult>;
+  defaultValues?: Partial<StartupFormValues>;
+  type?: "create" | "update";
 }
 
 function StartupForm({
@@ -345,13 +334,6 @@ function StartupForm({
                       <FormItem>
                         <FormLabel>{FIELD_NAMES.video}</FormLabel>
                         <FormControl>
-                          {/* <Input
-                            type="url"
-                            placeholder="https://youtube.com/watch?v=..."
-                            className="form-input"
-                            {...field}
-                          /> */}
-
                           <div className="h-32 w-full">
                             <FileUpload
                               type="video"

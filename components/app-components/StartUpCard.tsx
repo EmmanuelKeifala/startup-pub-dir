@@ -1,7 +1,6 @@
 import Link from "next/link";
 import React from "react";
 import { StartUpCover } from "./index";
-import { cn } from "@/lib/utils";
 import { Startup } from "@/types/general";
 
 function StartUpCard({ id, categoryName, companyColors, logo, name }: Startup) {

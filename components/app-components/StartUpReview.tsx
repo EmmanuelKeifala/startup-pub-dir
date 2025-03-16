@@ -50,7 +50,6 @@ interface ReviewInputProps {
 
 const ReviewInput: React.FC<ReviewInputProps> = ({
   startupId,
-  userId,
   companyColors = "",
   onReviewAdded,
 }) => {

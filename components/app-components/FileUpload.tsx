@@ -25,10 +25,19 @@ const authenticator = async () => {
     const data = await response.json();
     const { signature, expire, token } = data;
     return { token, expire, signature };
-  } catch (error: any) {
-    throw new Error(`Authentication request failed: ${error.message}`);
+  } catch (error: unknown) {
+    throw new Error(
+      `Authentication request failed: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
   }
 };
+
+interface FileUploadResponse {
+  filePath: string;
+  url: string;
+}
 
 interface Props {
   type: "image" | "video";
@@ -49,7 +58,7 @@ const FileUpload = ({
   onFileChange,
   value,
 }: Props) => {
-  const ikUploadRef = useRef(null);
+  const ikUploadRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<{
     filePath: string | null;
     url: string | null;
@@ -82,13 +91,13 @@ const FileUpload = ({
   };
 
   const onError = (error: any) => {
-    console.log(error);
+    console.error(error);
     toast.error(`${type} upload failed`, {
       description: `Your ${type} could not be uploaded. Please try again.`,
     });
   };
 
-  const onSuccess = (res: any) => {
+  const onSuccess = (res: FileUploadResponse) => {
     setFile(res);
     onFileChange(res.url);
 
@@ -142,10 +151,7 @@ const FileUpload = ({
           className={styles.button}
           onClick={(e) => {
             e.preventDefault();
-            if (ikUploadRef.current) {
-              // @ts-ignore
-              ikUploadRef.current?.click();
-            }
+            ikUploadRef.current?.click();
           }}
         >
           {!file?.filePath ? (
@@ -190,8 +196,8 @@ const FileUpload = ({
           <div className="mt-4 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
             {type === "image" ? (
               <IKImage
-                alt={file.filePath as string}
-                path={file.filePath as string}
+                alt={file.filePath}
+                path={file.filePath}
                 height={200}
                 width={300}
                 transformation={[
@@ -205,7 +211,7 @@ const FileUpload = ({
               />
             ) : type === "video" ? (
               <IKVideo
-                path={file.filePath as string}
+                path={file.filePath}
                 controls={true}
                 className="w-full h-48 object-contain"
               />

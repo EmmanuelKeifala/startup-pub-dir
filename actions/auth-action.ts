@@ -11,7 +11,7 @@ type AuthCredentials = {
   email: string;
   password: string;
   fullName: string;
-  profilePicture: string;
+  profilePicture?: string;
   role: "admin" | "startup_owner" | "user";
 };
 

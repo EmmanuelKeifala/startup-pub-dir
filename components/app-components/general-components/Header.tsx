@@ -7,7 +7,6 @@ import { cn, getInitials } from "@/lib/utils";
 import { RocketIcon, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Session } from "next-auth";
 import { signOut, useSession } from "next-auth/react";
 
 function Header() {

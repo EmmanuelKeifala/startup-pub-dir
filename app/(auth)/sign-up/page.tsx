@@ -13,11 +13,14 @@ function SignUp() {
         fullName: "",
         email: "",
         role: "user",
-        profilePicture: "",
+        profilePicture: "", // Ensure this matches the expected type
         password: "",
-        confirmPassword: "",
+        confirmPassword: "", // Remove this if it's not part of AuthCredentials
       }}
-      onSubmit={signUp}
+      onSubmit={async (data) => {
+        const result = await signUp(data);
+        return result || { success: false, error: "An unknown error occurred" };
+      }}
     />
   );
 }

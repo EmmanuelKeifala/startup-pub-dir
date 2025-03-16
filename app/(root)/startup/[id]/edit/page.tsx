@@ -6,14 +6,50 @@ import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StartupForm from "@/components/app-components/StartUpForm";
-import { useSession } from "next-auth/react";
+
+// Define types for the startup data
+interface Startup {
+  id: string;
+  name: string;
+  categoryId: string;
+  description: string;
+  location: string;
+  website: string;
+  phone: string;
+  email: string;
+  social: string;
+  logo: string;
+  video: string;
+  companyColors: string;
+}
+
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface FormData {
+  name: string;
+  categoryId: string;
+  description: string;
+  location: string;
+  website: string;
+  contact: {
+    phone: string;
+    email: string;
+    social: string;
+  };
+  logo: string;
+  video: string;
+  companyColors: string;
+}
 
 function Edit() {
-  const params = useParams();
+  const params = useParams<{ id: string }>();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [startupData, setStartupData] = useState(null);
-  const [categories, setCategories] = useState([]);
+  const [startupData, setStartupData] = useState<Startup | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   // Fetch the startup data and categories when the component mounts
   useEffect(() => {
@@ -53,9 +89,26 @@ function Edit() {
     fetchData();
   }, [params.id]);
 
-  // Transform API data to match form structure if needed
-  const prepareFormData = (data: any) => {
-    if (!data) return null;
+  // Transform API data to match form structure
+  const prepareFormData = (data: Startup | null): FormData => {
+    if (!data) {
+      // Return default values if data is null
+      return {
+        name: "",
+        categoryId: "",
+        description: "",
+        location: "",
+        website: "",
+        contact: {
+          phone: "",
+          email: "",
+          social: "",
+        },
+        logo: "",
+        video: "",
+        companyColors: "",
+      };
+    }
 
     return {
       name: data.name || "",
@@ -74,8 +127,9 @@ function Edit() {
     };
   };
 
-  const handleSubmit = async (formData: any) => {
-    // TODO: infer the proper type
+  const handleSubmit = async (
+    formData: FormData
+  ): Promise<{ success: boolean; error?: string }> => {
     try {
       const startupId = params.id;
       const response = await fetch(`/api/startups/${startupId}`, {
@@ -93,9 +147,13 @@ function Edit() {
       }
 
       return { success: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating startup:", error);
-      return { success: false, error: error?.message };
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      };
     }
   };
 

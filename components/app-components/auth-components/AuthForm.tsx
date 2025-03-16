@@ -26,7 +26,7 @@ import {
   useForm,
   UseFormReturn,
 } from "react-hook-form";
-import { z, ZodType } from "zod";
+import { ZodType } from "zod";
 import FileUpload from "../FileUpload";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -46,12 +46,17 @@ const FIELD_TYPES = {
   password: "password",
   confirmPassword: "password",
 };
+
+// Define the return type for the onSubmit function
+interface SubmitResult {
+  success: boolean;
+  error?: string;
+}
+
 interface Props<T extends FieldValues> {
   schema: ZodType<T>;
   defaultValues: T;
-  // onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
-  onSubmit: any;
-
+  onSubmit: (data: T) => Promise<SubmitResult>;
   type: "SIGN_IN" | "SIGN_UP";
 }
 

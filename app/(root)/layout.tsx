@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { Header } from "@/components/app-components/index";
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
+
 const Layout = async ({ children }: { children: ReactNode }) => {
   return (
     <main className="root-container">

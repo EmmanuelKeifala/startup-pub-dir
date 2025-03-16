@@ -5,7 +5,6 @@ import {
 import db from "@/database/drizzle";
 import { startupCategories, startups } from "@/database/schema";
 import { eq } from "drizzle-orm";
-import startupsDummy from "@/dummy";
 
 export default async function Home() {
   const startupsFromDB = await db
