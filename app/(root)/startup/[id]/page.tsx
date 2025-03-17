@@ -24,10 +24,13 @@ import StartupReviews, {
 async function StartUp({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
+  if (!session) {
+    return;
+  }
   const isOwner = await db
     .select()
     .from(startups)
-    .where(eq(startups.id, session?.user.id as string))
+    .where(eq(startups.ownerId, session.user.id as string))
     .limit(1);
 
   // Fetch data based on id
@@ -77,7 +80,7 @@ async function StartUp({ params }: { params: Promise<{ id: string }> }) {
       <div className="relative gap-4">
         <StartUpOverview {...startUpDetails} />
 
-        {isOwner?.length > 0 && (
+        {isOwner.length > 0 && (
           <div className="absolute ">
             <Button
               asChild

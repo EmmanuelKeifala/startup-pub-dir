@@ -65,6 +65,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           profilePicture: token.profilePicture as string,
           role: token.role as "admin" | "startup_owner" | "user",
           fullName: token.fullName as string,
+          // emailVerified: null,
         };
       }
 
@@ -72,7 +73,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id as string;
         token.email = user.email as string;
         token.role = user.role as "admin" | "startup_owner" | "user";
         token.fullName = user.fullName;

@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 
-const PUBLIC_ROUTES = ["/", "/sign-in", "/sign-up", /^\/startup\/[^/]+$/];
+const PUBLIC_ROUTES = [
+  "/",
+  "/startUps",
+  "/sign-in",
+  "/sign-up",
+  /^\/startup\/[^/]+$/,
+];
 
 export async function middleware(req: NextRequest) {
   const session = await auth(); // Get user session (adjust based on your auth setup)
