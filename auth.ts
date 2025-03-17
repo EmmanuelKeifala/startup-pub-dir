@@ -65,7 +65,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           profilePicture: token.profilePicture as string,
           role: token.role as "admin" | "startup_owner" | "user",
           fullName: token.fullName as string,
-          // emailVerified: null,
+          emailVerified: null,
         };
       }
 

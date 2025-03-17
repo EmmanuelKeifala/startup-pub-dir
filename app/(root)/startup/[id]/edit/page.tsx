@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StartupForm from "@/components/app-components/StartUpForm";
 
@@ -159,8 +159,9 @@ function Edit() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader className="animate-spin text-blue-500 w-12 h-12" />
+      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+        <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+        <p className="text-light-100">Loading edit page...</p>
       </div>
     );
   }
@@ -195,9 +196,18 @@ function Edit() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <h1 className="text-3xl font-bold text-white mb-8">
-        Edit Startup Profile
-      </h1>
+      <div className="flex items-center gap-4">
+        <ArrowLeft
+          size={50}
+          className="text-white cursor-pointer"
+          onClick={() => {
+            router.back();
+          }}
+        />
+        <span className="text-3xl font-bold text-white mb-8">
+          Edit Startup Profile
+        </span>
+      </div>
       <StartupForm
         type="update"
         categories={categories}
