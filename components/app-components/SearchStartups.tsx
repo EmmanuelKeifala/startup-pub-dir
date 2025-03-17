@@ -15,7 +15,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { searchStartupsAction } from "@/actions/search";
-import { eq } from "drizzle-orm";
 import db from "@/database/drizzle";
 import { startups } from "@/database/schema";
 

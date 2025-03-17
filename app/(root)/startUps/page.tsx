@@ -1,4 +1,3 @@
-import { StartUpList } from "@/components/app-components";
 import SearchStartups from "@/components/app-components/SearchStartups";
 import db from "@/database/drizzle";
 import { startupCategories, startups } from "@/database/schema";
