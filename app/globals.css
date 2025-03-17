@@ -206,6 +206,15 @@
   }
 }
 
+@utility search {
+  /* Search */
+  @apply relative mt-10 flex min-h-14 w-full items-center rounded-xl bg-dark-300 px-4;
+}
+
+@utility search-input {
+  @apply w-full! border-none! font-bold! placeholder:font-normal! text-white! placeholder:text-light-100! focus-visible:ring-0! focus-visible:shadow-none!;
+}
+
 @layer base {
   :root {
     --radius: 0.5rem;

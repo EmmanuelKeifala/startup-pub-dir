@@ -29,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .where(eq(users.email, email as string))
           .limit(1);
 
-        if (!user) {
+        if (!user || user.length === 0) {
           return null;
         }
 
@@ -48,6 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: user[0].role,
           fullName: user[0].fullname,
           profilePicture: user[0].profilePicture,
+          emailVerified: null,
         };
       },
     }),
