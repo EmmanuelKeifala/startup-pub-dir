@@ -35,7 +35,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${ibmPlexSans.className} ${bebasNeue.variable} antialiased bg-pattern`}
+        className={`${ibmPlexSans.className} ${bebasNeue.variable} antialiased`}
       >
         <SessionProvider session={session}>
           <main>{children}</main>
