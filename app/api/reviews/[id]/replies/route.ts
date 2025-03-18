@@ -2,6 +2,7 @@ import db from "@/database/drizzle";
 import { reviewReplies, users } from "@/database/schema";
 import { asc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function GET(
   request: Request,
@@ -24,5 +25,6 @@ export async function GET(
     .where(eq(reviewReplies.reviewId, reviewId))
     .orderBy(asc(reviewReplies.createdAt));
 
+  revalidatePath("/");
   return NextResponse.json({ replies });
 }

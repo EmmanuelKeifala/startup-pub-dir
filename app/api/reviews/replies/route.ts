@@ -3,6 +3,7 @@ import db from "@/database/drizzle";
 import { reviewReplies } from "@/database/schema";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 const reviewSchema = z.object({
   reviewId: z.string().uuid(),
@@ -36,6 +37,8 @@ export async function POST(request: Request) {
       replyText,
       ownerId,
     });
+
+    revalidatePath("/startup");
 
     return NextResponse.json({ success: true, reply });
   } catch (error) {

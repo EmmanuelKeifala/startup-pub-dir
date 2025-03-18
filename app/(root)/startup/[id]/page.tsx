@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import StartupReviews, {
   Review,
-} from "@/components/app-components/StartUpReview";
+} from "@/components/app-components/review-components/StartUpReview";
 
 async function StartUp({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
