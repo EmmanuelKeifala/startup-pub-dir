@@ -102,8 +102,6 @@ export const startupViews = pgTable("startup_views", {
   startupId: uuid("startup_id")
     .references(() => startups.id, { onDelete: "cascade" })
     .notNull(),
-  userId: uuid("user_id")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
   viewedAt: timestamp("viewed_at").notNull().defaultNow(),
 });

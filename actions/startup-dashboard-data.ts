@@ -1,5 +1,11 @@
 import db from "@/database/drizzle";
-import { startups, reviews, reviewReplies, users } from "@/database/schema";
+import {
+  startups,
+  reviews,
+  reviewReplies,
+  users,
+  startupViews,
+} from "@/database/schema";
 import { eq, desc, count, avg, sql, and, inArray } from "drizzle-orm";
 
 export async function fetchStartupStats(startupId: string) {
@@ -9,7 +15,7 @@ export async function fetchStartupStats(startupId: string) {
     .from(startups)
     .where(eq(startups.id, startupId));
 
-  if (!startup) {
+  if (!startup.length) {
     throw new Error("Startup not found");
   }
 
@@ -29,7 +35,13 @@ export async function fetchStartupStats(startupId: string) {
 
   const averageRating = Number(ratingResult[0]?.average || 0).toFixed(1);
 
-  const totalViews = 1230;
+  // Get actual view count
+  const viewsCountResult = await db
+    .select({ count: count() })
+    .from(startupViews)
+    .where(eq(startupViews.startupId, startupId));
+
+  const totalViews = viewsCountResult[0]?.count || 0;
 
   // Get pending approvals (reviews awaiting replies)
   const pendingApprovalsResult = await db
@@ -62,49 +74,126 @@ export async function fetchStartupStats(startupId: string) {
   // Get user information for the reviews
   const userIds = latestReviewsResult.map((review) => review.userId);
 
-  if (userIds.length === 0) {
-    return [];
+  const usersResult =
+    userIds.length > 0
+      ? await db
+          .select({
+            id: users.id,
+            fullname: users.fullname,
+            profilePicture: users.profilePicture,
+          })
+          .from(users)
+          .where(inArray(users.id, userIds))
+      : [];
+
+  const latestReviews = latestReviewsResult.map((review) => {
+    const user = usersResult.find((user) => user.id === review.userId);
+    return {
+      user: user?.fullname || "Anonymous",
+      comment: review.comment,
+      rating: review.rating,
+      date: review.date.toISOString().split("T")[0],
+      reply: review.replyText || "",
+      profilePicture: user?.profilePicture || "",
+    };
+  });
+
+  // Get historical view data (last 6 months)
+  const lastSixMonths = [];
+  const today = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    lastSixMonths.push({
+      monthDate: month,
+      monthName: month.toLocaleString("default", { month: "short" }),
+    });
   }
 
-  const usersResult = await db
-    .select({
-      id: users.id,
-      fullname: users.fullname,
-      profilePicture: users.profilePicture,
-    })
-    .from(users)
-    .where(inArray(users.id, userIds));
-  const latestReviews = latestReviewsResult.map(
-    (review: {
-      userId: any;
-      comment: any;
-      rating: any;
-      date: { toISOString: () => string };
-      replyText: any;
-    }) => {
-      const user = usersResult.find(
-        (user: { id: any }) => user.id === review.userId
+  // Get historical view data
+  const historicalViewsResult = await Promise.all(
+    lastSixMonths.map(async ({ monthDate, monthName }) => {
+      const startOfMonth = new Date(
+        monthDate.getFullYear(),
+        monthDate.getMonth(),
+        1
       );
+      const endOfMonth = new Date(
+        monthDate.getFullYear(),
+        monthDate.getMonth() + 1,
+        0
+      );
+
+      const viewsResult = await db
+        .select({ count: count() })
+        .from(startupViews)
+        .where(
+          and(
+            eq(startupViews.startupId, startupId),
+            sql`${startupViews.viewedAt} >= ${startOfMonth.toISOString()}`,
+            sql`${startupViews.viewedAt} <= ${endOfMonth.toISOString()}`
+          )
+        );
+
+      const reviewsResult = await db
+        .select({ count: count() })
+        .from(reviews)
+        .where(
+          and(
+            eq(reviews.startupId, startupId),
+            sql`${reviews.createdAt} >= ${startOfMonth.toISOString()}`,
+            sql`${reviews.createdAt} <= ${endOfMonth.toISOString()}`
+          )
+        );
+
+      const ratingResult = await db
+        .select({ average: avg(reviews.rating) })
+        .from(reviews)
+        .where(
+          and(
+            eq(reviews.startupId, startupId),
+            sql`${reviews.createdAt} >= ${startOfMonth.toISOString()}`,
+            sql`${reviews.createdAt} <= ${endOfMonth.toISOString()}`
+          )
+        );
+
       return {
-        user: user?.fullname || "Anonymous",
-        comment: review.comment,
-        rating: review.rating,
-        date: review.date.toISOString().split("T")[0],
-        reply: review.replyText || "",
-        profilePicture: user?.profilePicture || "",
+        month: monthName,
+        views: viewsResult[0]?.count || 0,
+        reviews: reviewsResult[0]?.count || 0,
+        rating: Number(ratingResult[0]?.average || 0).toFixed(1),
       };
-    }
+    })
   );
 
-  const historicalData = [
-    { month: "Jan", views: 800, reviews: 20, rating: 4.5 },
-    { month: "Feb", views: 900, reviews: 25, rating: 4.6 },
-    { month: "Mar", views: 1000, reviews: 28, rating: 4.5 },
-    { month: "Apr", views: 950, reviews: 30, rating: 4.6 },
-    { month: "May", views: 1100, reviews: 32, rating: 4.7 },
-    { month: "Jun", views: 1230, reviews: 35, rating: 4.7 },
-  ];
+  // Calculate traffic trends
+  const currentMonthViews = historicalViewsResult[5]?.views || 0;
+  const previousMonthViews = historicalViewsResult[4]?.views || 0;
+  const increasePercentage =
+    previousMonthViews > 0
+      ? Math.round(
+          ((currentMonthViews - previousMonthViews) / previousMonthViews) * 100
+        )
+      : 0;
 
+  // Calculate users who left without reviewing
+  // This is an approximation: views - reviews for the last month
+  const usersLeftWithoutReview = Math.max(
+    0,
+    currentMonthViews - (historicalViewsResult[5]?.reviews || 0)
+  );
+  const usersLeftLastMonth = Math.max(
+    0,
+    previousMonthViews - (historicalViewsResult[4]?.reviews || 0)
+  );
+  const decreasePercentage =
+    usersLeftLastMonth > 0
+      ? Math.round(
+          ((usersLeftWithoutReview - usersLeftLastMonth) / usersLeftLastMonth) *
+            100
+        )
+      : 0;
+
+  // Placeholder for sentiment analysis - TODO: implement actual sentiment analysis
   const sentimentAnalysis = [
     { category: "UX/UI", positive: 85, negative: 15 },
     { category: "Features", positive: 70, negative: 30 },
@@ -113,31 +202,12 @@ export async function fetchStartupStats(startupId: string) {
     { category: "Performance", positive: 75, negative: 25 },
   ];
 
+  // Placeholder for common keywords - TODO: implement keyword extraction
   const commonKeywords = [
     "Fast service",
     "Good pricing",
     "Needs better support",
   ];
-
-  // Calculate traffic trends
-  const currentMonth = new Date().getMonth();
-  const viewsThisMonth = historicalData[currentMonth]?.views || 0;
-  const viewsLastMonth = historicalData[currentMonth - 1]?.views || 0;
-  const increasePercentage =
-    viewsLastMonth > 0
-      ? Math.round(((viewsThisMonth - viewsLastMonth) / viewsLastMonth) * 100)
-      : 0;
-
-  // Calculate users who left without reviewing
-  const usersLeftWithoutReview = 500;
-  const usersLeftLastMonth = 525;
-  const decreasePercentage =
-    usersLeftLastMonth > 0
-      ? Math.round(
-          ((usersLeftWithoutReview - usersLeftLastMonth) / usersLeftLastMonth) *
-            100
-        )
-      : 0;
 
   return {
     stats: {
@@ -149,13 +219,13 @@ export async function fetchStartupStats(startupId: string) {
     latestReviews,
     performanceMetrics: {
       trafficTrends: {
-        viewsThisMonth,
+        viewsThisMonth: currentMonthViews,
         increasePercentage,
         usersLeftWithoutReview,
         decreasePercentage,
       },
       commonKeywords,
-      historicalData,
+      historicalData: historicalViewsResult,
       sentimentAnalysis,
     },
   };
