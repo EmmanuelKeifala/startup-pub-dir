@@ -29,9 +29,7 @@ export async function fetchStartupStats(startupId: string) {
 
   const averageRating = Number(ratingResult[0]?.average || 0).toFixed(1);
 
-  // Get total views (assuming we track this in a separate table or use analytics)
-  // For this example, we'll simulate it based on historical data
-  const totalViews = 1230; // This would come from your analytics system
+  const totalViews = 1230;
 
   // Get pending approvals (reviews awaiting replies)
   const pendingApprovalsResult = await db
@@ -65,7 +63,7 @@ export async function fetchStartupStats(startupId: string) {
   const userIds = latestReviewsResult.map((review) => review.userId);
 
   if (userIds.length === 0) {
-    return []; // Prevents an invalid query if no userIds exist
+    return [];
   }
 
   const usersResult = await db
@@ -76,7 +74,6 @@ export async function fetchStartupStats(startupId: string) {
     })
     .from(users)
     .where(inArray(users.id, userIds));
-  // Format latest reviews
   const latestReviews = latestReviewsResult.map(
     (review: {
       userId: any;
@@ -99,8 +96,6 @@ export async function fetchStartupStats(startupId: string) {
     }
   );
 
-  // Calculate monthly historical data
-  // In a real implementation, you'd likely use a more sophisticated query with date grouping
   const historicalData = [
     { month: "Jan", views: 800, reviews: 20, rating: 4.5 },
     { month: "Feb", views: 900, reviews: 25, rating: 4.6 },
@@ -110,8 +105,6 @@ export async function fetchStartupStats(startupId: string) {
     { month: "Jun", views: 1230, reviews: 35, rating: 4.7 },
   ];
 
-  // For sentiment analysis, you would ideally use a dedicated service or pre-processed data
-  // Here we'll simulate it based on keywords in reviews
   const sentimentAnalysis = [
     { category: "UX/UI", positive: 85, negative: 15 },
     { category: "Features", positive: 70, negative: 30 },
@@ -120,8 +113,6 @@ export async function fetchStartupStats(startupId: string) {
     { category: "Performance", positive: 75, negative: 25 },
   ];
 
-  // Extract common keywords from reviews
-  // In a real implementation, you'd use text analysis or NLP
   const commonKeywords = [
     "Fast service",
     "Good pricing",
@@ -138,8 +129,8 @@ export async function fetchStartupStats(startupId: string) {
       : 0;
 
   // Calculate users who left without reviewing
-  const usersLeftWithoutReview = 500; // This would come from your analytics system
-  const usersLeftLastMonth = 525; // This would come from your analytics system
+  const usersLeftWithoutReview = 500;
+  const usersLeftLastMonth = 525;
   const decreasePercentage =
     usersLeftLastMonth > 0
       ? Math.round(
@@ -148,7 +139,6 @@ export async function fetchStartupStats(startupId: string) {
         )
       : 0;
 
-  // Compile all data
   return {
     stats: {
       totalReviews,

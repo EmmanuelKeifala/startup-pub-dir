@@ -96,3 +96,14 @@ export const startupCategories = pgTable("startup_categories", {
   id: uuid("id").primaryKey().notNull().defaultRandom().unique(),
   name: varchar("name", { length: 100 }).notNull().unique(),
 });
+
+export const startupViews = pgTable("startup_views", {
+  id: uuid("id").primaryKey().notNull().defaultRandom().unique(),
+  startupId: uuid("startup_id")
+    .references(() => startups.id, { onDelete: "cascade" })
+    .notNull(),
+  userId: uuid("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  viewedAt: timestamp("viewed_at").notNull().defaultNow(),
+});
