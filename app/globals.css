@@ -215,18 +215,19 @@
   @apply w-full! border-none! font-bold! placeholder:font-normal! text-white! placeholder:text-light-100! focus-visible:ring-0! focus-visible:shadow-none!;
 }
 
+
 .reviews-container::-webkit-scrollbar {
-  width: 6px;
+  width: 1px;
 }
 
 .reviews-container::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 1px;
 }
 
 .reviews-container::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+  border-radius: 1px;
 }
 
 @layer base {

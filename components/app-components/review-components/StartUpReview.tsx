@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
-import { ReviewInput, ReplyInput, ReplyItem, ReviewItem } from "./index";
+import { ReviewInput, ReviewItem } from "./index";
 import { Loader2 } from "lucide-react";
 
 // Type definitions for better type safety
@@ -55,30 +55,28 @@ function StartupReviews({
   const [isLoading, setIsLoading] = useState<boolean>(!initialReviews.length);
 
   // Function to fetch reviews
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/reviews?startupId=${startupId}`);
-      if (response.ok) {
-        const data = await response.json();
-
-        setReviews(data.reviews || []);
-      } else {
-        console.error("Failed to fetch reviews");
+      if (!response.ok) {
+        throw new Error("Failed to fetch reviews");
       }
+      const data = await response.json();
+      setReviews(data.reviews);
     } catch (error) {
       console.error("Error fetching reviews:", error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [startupId]);
 
   // Fetch reviews on component mount if no initial reviews provided
   useEffect(() => {
     if (!initialReviews.length) {
       fetchReviews();
     }
-  }, [startupId, initialReviews.length]);
+  }, [startupId, initialReviews.length, fetchReviews]);
 
   // Handle review added
   const handleReviewAdded = () => {

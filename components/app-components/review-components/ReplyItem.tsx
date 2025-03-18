@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Avatar } from "@radix-ui/react-avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Flag, ThumbsUp } from "lucide-react";

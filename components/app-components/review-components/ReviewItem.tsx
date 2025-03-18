@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ReplyType, Review } from "./StartUpReview";
 import ReplyItem from "./ReplyItem";
 import ReplyInput from "./ReplyInput";
@@ -14,6 +14,7 @@ import { Avatar } from "@/components/ui/avatar";
 import Image from "next/image";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ReviewItemProps {
   review: Review;
@@ -33,9 +34,28 @@ function ReviewItem({
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
   const [replies, setReplies] = useState<ReplyType[]>([]);
   const [repliesHidden, setRepliesHidden] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const isCurrentUserReview = userId === currentUserId;
   const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+
+  // Fix the dependency issue by using useCallback
+  const fetchReplies = useCallback(async () => {
+    if (!id) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/reviews/${id}/replies`);
+      if (response.ok) {
+        const data = await response.json();
+        setReplies(data.replies || []);
+      }
+    } catch (error) {
+      console.error("Error fetching replies:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id]);
 
   const handleLike = () => {
     if (!liked) {
@@ -63,39 +83,33 @@ function ReviewItem({
     setRepliesHidden(!repliesHidden);
   };
 
-  const fetchReplies = async () => {
-    try {
-      const response = await fetch(`/api/reviews/${id}/replies`);
-      if (response.ok) {
-        const data = await response.json();
-
-        console.log("Data: ", data);
-        setReplies(data.replies || []);
-      }
-    } catch (error) {
-      console.error("Error fetching replies:", error);
-    }
-  };
-
   useEffect(() => {
     fetchReplies();
-  }, [id]);
+  }, [fetchReplies]);
 
   const userAvatar = image;
   const userName = name || "Anonymous User";
 
   return (
-    <div
-      className="rounded-lg shadow-sm p-4 mb-4"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="rounded-lg shadow-sm p-4 mb-4 border border-gray-800"
       style={{
         background: "linear-gradient(180deg, #22191d 0%, #12151f 100%)",
       }}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <Avatar>
+          <Avatar className="border border-gray-700">
             {userAvatar ? (
-              <Image src={userAvatar} fill alt={userName} />
+              <Image
+                src={userAvatar}
+                fill
+                alt={userName}
+                className="object-cover"
+              />
             ) : (
               <div className="bg-gray-700 h-full w-full flex items-center justify-center text-white">
                 {userName.charAt(0).toUpperCase()}
@@ -126,44 +140,61 @@ function ReviewItem({
       </div>
 
       <div className="mt-4 flex items-center justify-between text-sm">
-        <button
-          className={`flex items-center gap-1 ${
-            liked ? "text-blue-400" : "text-slate-300"
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
+            liked
+              ? "text-blue-400 bg-blue-400/10"
+              : "text-slate-300 hover:bg-gray-700/50"
           }`}
           onClick={handleLike}
         >
           <ThumbsUp size={14} />
           <span>{likeCount > 0 ? likeCount : ""} Helpful</span>
-        </button>
+        </motion.button>
 
         <div className="flex items-center gap-4">
-          <button
-            className="text-gray-400 flex items-center gap-1"
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gray-700/50 transition-colors"
             onClick={() => setShowReplyInput(!showReplyInput)}
           >
             <Reply size={14} />
             Reply
-          </button>
+          </motion.button>
 
           {!isCurrentUserReview && (
-            <button
-              className="text-gray-400 flex items-center gap-1"
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gray-700/50 transition-colors"
               onClick={handleReport}
             >
               <Flag size={14} />
               Report
-            </button>
+            </motion.button>
           )}
         </div>
       </div>
 
-      {showReplyInput && (
-        <ReplyInput
-          reviewId={id}
-          onReplyAdded={handleReplyAdded}
-          onCancel={() => setShowReplyInput(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showReplyInput && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ReplyInput
+              reviewId={id}
+              onReplyAdded={handleReplyAdded}
+              onCancel={() => setShowReplyInput(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {replies.length > 0 && (
         <>
@@ -171,9 +202,11 @@ function ReviewItem({
             <p className="text-sm text-gray-400">
               {replies.length} {replies.length === 1 ? "Reply" : "Replies"}
             </p>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={toggleRepliesVisibility}
-              className="text-gray-400 hover:text-gray-300 flex items-center text-xs"
+              className="text-gray-400 hover:text-gray-200 flex items-center text-xs px-2 py-1 rounded-md hover:bg-gray-700/50 transition-colors"
             >
               {repliesHidden ? (
                 <>
@@ -186,23 +219,40 @@ function ReviewItem({
                   Hide Replies
                 </>
               )}
-            </button>
+            </motion.button>
           </div>
 
-          {!repliesHidden && (
-            <div className="mt-2">
-              {replies.map((reply) => (
-                <ReplyItem
-                  key={reply.id}
-                  reply={reply}
-                  currentUserId={currentUserId}
-                />
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {!repliesHidden && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mt-2 pl-4 border-l-2 border-gray-800"
+              >
+                {isLoading ? (
+                  <div className="flex justify-center py-4">
+                    <div className="w-6 h-6 border-2 border-t-blue-500 border-gray-700 rounded-full animate-spin"></div>
+                  </div>
+                ) : (
+                  replies.map((reply, index) => (
+                    <motion.div
+                      key={reply.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2, delay: index * 0.05 }}
+                    >
+                      <ReplyItem reply={reply} currentUserId={currentUserId} />
+                    </motion.div>
+                  ))
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }
 
