@@ -12,7 +12,7 @@ import StartUpDetails, {
   StartupDetails,
 } from "@/components/app-components/StartUpDetails";
 import { Session } from "next-auth";
-import { getStartUpReviews, getUserStartUp } from "@/actions/helper-actions";
+import { getStartUpReviews, getStartUp } from "@/actions/helper-actions";
 import { Startup } from "@/types/general";
 
 interface StartUpProps {
@@ -23,13 +23,7 @@ async function StartUp({ params }: StartUpProps) {
   const { id } = await (params as Promise<{ id: string }>);
   const session = await auth();
 
-  const isOwner = await db
-    .select()
-    .from(startups)
-    .where(eq(startups.ownerId, session?.user?.id as string))
-    .limit(1);
-
-  const startUpDetails = await getUserStartUp({
+  const startUpDetails = await getStartUp({
     params: {
       id,
     },
@@ -41,29 +35,13 @@ async function StartUp({ params }: StartUpProps) {
     },
   });
 
-  if (!startUpDetails) redirect("/404");
+  if (!startUpDetails) redirect("/");
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl text-white">
-      {/* Overview Section with positioned Edit button */}
+      {/* Overview Section  */}
       <div className="relative gap-4">
         <StartUpOverview {...(startUpDetails as Startup)} />
-
-        {isOwner.length > 0 && (
-          <div className="absolute">
-            <Button
-              asChild
-              size="sm"
-              variant="outline"
-              className="bg-blue-500/20 hover:bg-blue-500/30 border-blue-500/50 text-blue-300 flex items-center gap-1"
-            >
-              <Link href={`/startup/${id}/edit`}>
-                <Edit className="w-4 h-4 mr-1" />
-                Edit Startup
-              </Link>
-            </Button>
-          </div>
-        )}
       </div>
 
       {/* Details Section */}

@@ -15,11 +15,6 @@ export const adminSideBarLinks = (isSuperAdmin: boolean) => {
       route: "/admin",
       text: "Home",
     },
-    {
-      icon: Users,
-      route: "/admin/users",
-      text: "All Users",
-    },
   ];
 
   const startupOwnerLinks = [
@@ -27,6 +22,11 @@ export const adminSideBarLinks = (isSuperAdmin: boolean) => {
       icon: Building,
       route: "/admin/my-startup",
       text: "My Startup",
+    },
+    {
+      icon: Users,
+      route: "/admin/users",
+      text: "All Users",
     },
   ];
 

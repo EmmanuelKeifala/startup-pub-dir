@@ -4,11 +4,7 @@ import db from "@/database/drizzle";
 import { reviews, startupCategories, startups, users } from "@/database/schema";
 import { eq } from "drizzle-orm";
 
-export const getUserStartUp = async ({
-  params,
-}: {
-  params: { id: string };
-}) => {
+export const getStartUp = async ({ params }: { params: { id: string } }) => {
   try {
     const [startUpDetails] = await db
       .select({
@@ -99,5 +95,43 @@ export const getAllStartUps = async () => {
   } catch (error) {
     console.log("[SERVER_ERROR_FETCHING_ALL_STARTUPS]: ", error);
     return [];
+  }
+};
+
+export const getUserStartUp = async ({
+  params,
+}: {
+  params: { id: string };
+}) => {
+  try {
+    const [startUpDetails] = await db
+      .select({
+        id: startups.id,
+        name: startups.name,
+        description: startups.description,
+        location: startups.location,
+        website: startups.website,
+        email: startups.email,
+        phone: startups.phone,
+        social: startups.social,
+        logo: startups.logo,
+        video: startups.video,
+        companyColors: startups.companyColors,
+        status: startups.status,
+        rating: startups.rating,
+        categoryId: startups.categoryId,
+        categoryName: startupCategories.name,
+      })
+      .from(startups)
+      .innerJoin(
+        startupCategories,
+        eq(startups.categoryId, startupCategories.id)
+      )
+      .where(eq(startups.ownerId, params.id));
+
+    return startUpDetails || null;
+  } catch (error) {
+    console.log("[SERVER_ERROR_FETCHING_USER_STARTUPS]: ", error);
+    return null;
   }
 };

@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StartupForm from "@/components/app-components/StartUpForm";
+import { getUserStartUp } from "@/actions/helper-actions";
+import { useSession } from "next-auth/react";
 
 // Define types for the startup data
 interface Startup {
@@ -44,12 +46,13 @@ interface FormData {
   companyColors: string;
 }
 
-function Edit() {
-  const params = useParams<{ id: string }>();
+function MyStartUp() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [startupData, setStartupData] = useState<Startup | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [startupId, setStartUpId] = useState<string>("");
+  const { data: session } = useSession();
 
   // Fetch the startup data and categories when the component mounts
   useEffect(() => {
@@ -57,9 +60,15 @@ function Edit() {
       try {
         setLoading(true);
 
+        const userStartUp = await getUserStartUp({
+          params: {
+            id: session?.user.id as string,
+          },
+        });
+
+        setStartUpId(userStartUp?.id as string);
         // Fetch startup data
-        const id = params.id;
-        const startupResponse = await fetch(`/api/startups/${id}`);
+        const startupResponse = await fetch(`/api/startups/${userStartUp?.id}`);
 
         if (!startupResponse.ok) {
           throw new Error("Failed to fetch startup data");
@@ -87,7 +96,7 @@ function Edit() {
     };
 
     fetchData();
-  }, [params.id]);
+  }, []);
 
   // Transform API data to match form structure
   const prepareFormData = (data: Startup | null): FormData => {
@@ -131,7 +140,6 @@ function Edit() {
     formData: FormData
   ): Promise<{ success: boolean; error?: string }> => {
     try {
-      const startupId = params.id;
       const response = await fetch(`/api/startups/${startupId}`, {
         method: "PATCH",
         headers: {
@@ -168,12 +176,7 @@ function Edit() {
 
   if (!startupData) {
     return (
-      <Card
-        className="w-full text-white"
-        style={{
-          background: "linear-gradient(180deg, #12141d 0%, #12151f 100%)",
-        }}
-      >
+      <Card className="w-full text-white">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-red-400">
             Startup Not Found
@@ -195,7 +198,7 @@ function Edit() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container">
       <div className="flex items-center gap-4">
         <ArrowLeft
           size={50}
@@ -219,4 +222,4 @@ function Edit() {
   );
 }
 
-export default Edit;
+export default MyStartUp;
