@@ -82,9 +82,9 @@ function StartupForm({
           toast.success("Startup has been successfully added");
           //  TODO: push the user to the startup they have just created
         } else {
+          router.push(`/`);
           toast.success("Startup has been successfully updated");
         }
-        router.push(`/`);
         setIsLoading(false);
       } else {
         setIsLoading(false);
@@ -118,14 +118,22 @@ function StartupForm({
 
   return (
     <Card
-      className="w-full text-white"
+      className={`${
+        type === "create" ? "w-full text-white" : "w-full text-black"
+      }`}
       style={{
-        background: "linear-gradient(180deg, #12141d 0%, #12151f 100%)",
+        background: `${
+          type === "create"
+            ? "linear-gradient(180deg, #12141d 0%, #12151f 100%)"
+            : ""
+        }`,
       }}
     >
       <CardHeader>
         <CardTitle className="text-2xl font-semibold">
-          Add New Startup
+          {type === "create"
+            ? "Add New Startup"
+            : "Update your start up profile"}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -147,7 +155,11 @@ function StartupForm({
                       <FormControl>
                         <Input
                           required
-                          className="form-input"
+                          className={` ${
+                            type === "create"
+                              ? "text-white form-input"
+                              : "text-black"
+                          }`}
                           placeholder="Your startup name"
                           {...field}
                         />
@@ -166,7 +178,13 @@ function StartupForm({
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
-                        <SelectTrigger className="form-input">
+                        <SelectTrigger
+                          className={` ${
+                            type === "create"
+                              ? "text-white form-input"
+                              : "text-black"
+                          }`}
+                        >
                           <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                         <SelectContent>
@@ -190,7 +208,11 @@ function StartupForm({
                       <FormControl>
                         <Input
                           required
-                          className="form-input"
+                          className={` ${
+                            type === "create"
+                              ? "text-white form-input"
+                              : "text-black"
+                          }`}
                           placeholder="City, Country"
                           {...field}
                         />
@@ -208,7 +230,11 @@ function StartupForm({
                       <FormControl>
                         <Input
                           type="url"
-                          className="form-input"
+                          className={` ${
+                            type === "create"
+                              ? "text-white form-input"
+                              : "text-black"
+                          }`}
                           placeholder="https://example.com"
                           {...field}
                         />
@@ -228,7 +254,11 @@ function StartupForm({
                       <FormControl>
                         <Textarea
                           required
-                          className="form-input min-h-28"
+                          className={` min-h-28 ${
+                            type === "create"
+                              ? "text-white form-input "
+                              : "text-black"
+                          }`}
                           placeholder="Describe your startup..."
                           {...field}
                         />
@@ -252,7 +282,11 @@ function StartupForm({
                       <FormControl>
                         <Input
                           type="email"
-                          className="form-input"
+                          className={` ${
+                            type === "create"
+                              ? "text-white form-input"
+                              : "text-black"
+                          }`}
                           placeholder="contact@yourstartup.com"
                           {...field}
                         />
@@ -269,7 +303,11 @@ function StartupForm({
                       <FormLabel>{FIELD_NAMES["contact.phone"]}</FormLabel>
                       <FormControl>
                         <Input
-                          className="form-input"
+                          className={` ${
+                            type === "create"
+                              ? "text-white form-input"
+                              : "text-black"
+                          }`}
                           placeholder="+232 555-123-4567"
                           {...field}
                         />
@@ -286,7 +324,11 @@ function StartupForm({
                       <FormLabel>{FIELD_NAMES["contact.social"]}</FormLabel>
                       <FormControl>
                         <Input
-                          className="form-input"
+                          className={` ${
+                            type === "create"
+                              ? "text-white form-input"
+                              : "text-black"
+                          }`}
                           placeholder="https://twitter.com/yourstartup"
                           {...field}
                         />
@@ -317,7 +359,7 @@ function StartupForm({
                             accept="image/*"
                             placeholder="Upload Logo"
                             folder="logos"
-                            variant="dark"
+                            variant={type === "create" ? "dark" : "light"}
                             onFileChange={field.onChange}
                           />
                         </div>
@@ -340,7 +382,7 @@ function StartupForm({
                               accept="video/*"
                               placeholder="Upload Logo"
                               folder="videos"
-                              variant="dark"
+                              variant={type === "create" ? "dark" : "light"}
                               onFileChange={field.onChange}
                             />
                           </div>
@@ -380,7 +422,11 @@ function StartupForm({
                                     updateColor(index, e.target.value)
                                   }
                                   placeholder="#RRGGBB"
-                                  className="form-input flex-1"
+                                  className={`flex-1 ${
+                                    type === "create"
+                                      ? "text-white form-input "
+                                      : "text-black"
+                                  }`}
                                 />
                               </div>
                             ))}
