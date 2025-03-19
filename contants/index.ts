@@ -23,11 +23,6 @@ export const adminSideBarLinks = (isSuperAdmin: boolean) => {
       route: "/admin/my-startup",
       text: "My Startup",
     },
-    {
-      icon: Users,
-      route: "/admin/users",
-      text: "All Users",
-    },
   ];
 
   const superAdminLinks = [
