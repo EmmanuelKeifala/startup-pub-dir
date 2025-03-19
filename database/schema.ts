@@ -66,6 +66,7 @@ export const reviews = pgTable("reviews", {
     .notNull(),
   rating: integer("rating").notNull(), // 1-5 star rating
   comment: text("comment").notNull(),
+  sentiment: text("sentiment"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

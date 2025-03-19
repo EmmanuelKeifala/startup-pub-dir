@@ -15,6 +15,13 @@
       "when": 1742073884322,
       "tag": "0001_right_mysterio",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1742409461805,
+      "tag": "0002_melted_hannibal_king",
+      "breakpoints": true
     }
   ]
 }
