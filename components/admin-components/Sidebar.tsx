@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { adminSideBarLinks } from "@/contants";
 import Link from "next/link";
 import { cn, getInitials } from "@/lib/utils";

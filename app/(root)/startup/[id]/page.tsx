@@ -17,7 +17,6 @@ async function StartUp({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
 
-  // TODO:  would have to separate some concerns here
   const isOwner = await db
     .select()
     .from(startups)

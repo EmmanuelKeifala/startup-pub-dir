@@ -5,7 +5,6 @@ import { eq } from "drizzle-orm";
 import React from "react";
 
 async function StartUps() {
-  // TODO: later turn this into a server action
   const startupsFromDB = await db
     .select({
       id: startups.id,

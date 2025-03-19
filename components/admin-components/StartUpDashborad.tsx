@@ -72,7 +72,6 @@ import {
   Star,
   Eye,
   MessageSquare,
-  Clock,
   TrendingUp,
   Edit,
   Upload,
@@ -109,7 +108,7 @@ const StartupDashboard: React.FC<StartupDashboardProps> = ({
           {startupName} Dashboard
         </h1>
         <p className="text-gray-500">
-          Track and manage your startup's performance metrics
+          Track and manage your startup&apos; performance metrics
         </p>
       </div>
 
