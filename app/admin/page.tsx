@@ -12,6 +12,7 @@ async function Home() {
   if (!session?.user) {
     redirect("/sign-in");
   }
+
   const startupData = await fetchStartupStats(
     "7f9e98ce-1ab4-450b-a0de-bc36b5d452e5" // TODO: set real startup
   );

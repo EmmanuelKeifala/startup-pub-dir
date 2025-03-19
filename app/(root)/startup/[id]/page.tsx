@@ -12,66 +12,45 @@ import StartUpDetails, {
   StartupDetails,
 } from "@/components/app-components/StartUpDetails";
 import { Session } from "next-auth";
+import { getStartUpReviews, getUserStartUp } from "@/actions/helper-actions";
+import { Startup } from "@/types/general";
 
-async function StartUp({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+interface StartUpProps {
+  params: { id: string } | Promise<{ id: string }>;
+}
+
+async function StartUp({ params }: StartUpProps) {
+  const { id } = await (params as Promise<{ id: string }>);
   const session = await auth();
 
   const isOwner = await db
     .select()
     .from(startups)
-    .where(eq(startups.ownerId, session?.user.id as string))
+    .where(eq(startups.ownerId, session?.user?.id as string))
     .limit(1);
 
-  // Fetch data based on id
-  const [startUpDetails] = await db
-    .select({
-      id: startups.id,
-      name: startups.name,
-      description: startups.description,
-      location: startups.location,
-      website: startups.website,
-      email: startups.email,
-      phone: startups.phone,
-      social: startups.social,
-      logo: startups.logo,
-      video: startups.video,
-      companyColors: startups.companyColors,
-      status: startups.status,
-      rating: startups.rating,
-      categoryId: startups.categoryId,
-      categoryName: startupCategories.name,
-    })
-    .from(startups)
-    .innerJoin(startupCategories, eq(startups.categoryId, startupCategories.id))
-    .where(eq(startups.id, id));
+  const startUpDetails = await getUserStartUp({
+    params: {
+      id,
+    },
+  });
+
+  const initialReviews = await getStartUpReviews({
+    params: {
+      id: startUpDetails?.id as string,
+    },
+  });
 
   if (!startUpDetails) redirect("/404");
-
-  const initialReviews = await db
-    .select({
-      reviewId: reviews.id,
-      rating: reviews.rating,
-      comment: reviews.comment,
-      createdAt: reviews.createdAt,
-      userId: users.id,
-      name: users.fullname,
-      image: users.profilePicture,
-      id: reviews.id,
-      startupId: reviews.startupId,
-    })
-    .from(reviews)
-    .innerJoin(users, eq(reviews.userId, users.id))
-    .where(eq(reviews.startupId, startUpDetails.id));
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl text-white">
       {/* Overview Section with positioned Edit button */}
       <div className="relative gap-4">
-        <StartUpOverview {...startUpDetails} />
+        <StartUpOverview {...(startUpDetails as Startup)} />
 
         {isOwner.length > 0 && (
-          <div className="absolute ">
+          <div className="absolute">
             <Button
               asChild
               size="sm"
