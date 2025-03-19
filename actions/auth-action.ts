@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { signIn } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/dist/server/api-utils";
 
 type AuthCredentials = {
   email: string;
@@ -30,7 +31,7 @@ export const signInWithCredentials = async (
       return { success: false, error: result.error };
     }
 
-    revalidatePath("/", "layout");
+    revalidatePath("/");
     return { success: true };
   } catch (error) {
     console.log("[SIGN_IN_ERROR]: ", error);

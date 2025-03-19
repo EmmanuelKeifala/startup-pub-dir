@@ -61,9 +61,6 @@ export interface StartupData {
 interface StartupDashboardProps {
   startupData: StartupData;
   startupName?: string;
-  onEditProfile?: () => void;
-  onUpdateLogo?: () => void;
-  onUploadVideo?: () => void;
 }
 
 import { Progress } from "@/components/ui/progress";
@@ -73,8 +70,6 @@ import {
   Eye,
   MessageSquare,
   TrendingUp,
-  Edit,
-  Upload,
   ThumbsUp,
   AlertCircle,
 } from "lucide-react";
@@ -94,9 +89,6 @@ import {
 const StartupDashboard: React.FC<StartupDashboardProps> = ({
   startupData,
   startupName = "Your Startup",
-  onEditProfile = () => console.log("Edit profile clicked"),
-  onUpdateLogo = () => console.log("Update logo clicked"),
-  onUploadVideo = () => console.log("Upload video clicked"),
 }) => {
   const { stats, latestReviews, performanceMetrics } = startupData;
   const ratingPercentage = (stats.averageRating / 5) * 100;
@@ -395,41 +387,6 @@ const StartupDashboard: React.FC<StartupDashboardProps> = ({
             </button>
           </div>
         </CardFooter>
-      </Card>
-
-      {/* Quick Actions Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Startup Profile</CardTitle>
-          <CardDescription>
-            Update your startup information and marketing assets
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <button
-              onClick={onEditProfile}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all"
-            >
-              <Edit className="h-5 w-5" />
-              <span>Edit Startup Info</span>
-            </button>
-            <button
-              onClick={onUpdateLogo}
-              className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-all"
-            >
-              <Upload className="h-5 w-5" />
-              <span>Update Logo</span>
-            </button>
-            <button
-              onClick={onUploadVideo}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-all"
-            >
-              <Upload className="h-5 w-5" />
-              <span>Upload New Video</span>
-            </button>
-          </div>
-        </CardContent>
       </Card>
     </div>
   );

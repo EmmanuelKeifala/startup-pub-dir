@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
 
 function Header() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -48,6 +48,11 @@ function Header() {
     {
       href: "/register",
       label: session?.user?.role === "startup_owner" && "Register",
+    },
+    {
+      href: "/admin",
+      label:
+        session?.user?.role !== "admin" ? "Manage Startups" : "Manage Startup",
     },
     {
       href: "/sign-in",

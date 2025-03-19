@@ -75,20 +75,25 @@ function AuthForm<T extends FieldValues>({
   const isLoading = form.formState.isSubmitting;
 
   const handleSubmit: SubmitHandler<T> = async (data) => {
-    const result = await onSubmit(data);
+    try {
+      const result = await onSubmit(data);
 
-    if (result?.success) {
-      toast.success(
-        `${
-          type === "SIGN_IN"
-            ? "You have successfully signed in"
-            : "You have successfully signed up"
-        }`
-      );
+      if (result?.success) {
+        toast.success(
+          `${
+            type === "SIGN_IN"
+              ? "You have successfully signed in"
+              : "You have successfully signed up"
+          }`
+        );
 
-      router.push("/");
-    } else {
-      toast.error(result.error || "Something went wrong");
+        router.push("/");
+      } else {
+        toast.error(result.error || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      toast.error("An unexpected error occurred");
     }
   };
 

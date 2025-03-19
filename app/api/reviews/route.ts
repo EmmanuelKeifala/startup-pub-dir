@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     revalidatePath(`/startup/${startupId}`);
+    
     // Return the newly created review with user details
     return NextResponse.json(
       {
