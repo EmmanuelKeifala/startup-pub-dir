@@ -40,16 +40,16 @@ interface HistoricalData {
 }
 
 interface SentimentAnalysis {
-  category: string;
   positive: number;
   negative: number;
+  neutral: number;
 }
 
 interface PerformanceMetrics {
   trafficTrends: TrafficTrends;
   commonKeywords: string[];
   historicalData: HistoricalData[];
-  sentimentAnalysis: SentimentAnalysis[];
+  sentimentAnalysis: SentimentAnalysis;
 }
 
 export interface StartupData {
@@ -84,6 +84,9 @@ import {
   BarChart,
   Bar,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 
 const StartupDashboard: React.FC<StartupDashboardProps> = ({
@@ -93,6 +96,14 @@ const StartupDashboard: React.FC<StartupDashboardProps> = ({
   const { stats, latestReviews, performanceMetrics } = startupData;
   const ratingPercentage = (stats.averageRating / 5) * 100;
 
+  const sentimentData = [
+    { name: "Positive", value: performanceMetrics.sentimentAnalysis.positive },
+    { name: "Negative", value: performanceMetrics.sentimentAnalysis.negative },
+    { name: "Neutral", value: performanceMetrics.sentimentAnalysis.neutral },
+  ];
+
+  const COLORS = ["#10b981", "#ef4444", "#6b7280"];
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="mb-8">
@@ -100,7 +111,7 @@ const StartupDashboard: React.FC<StartupDashboardProps> = ({
           {startupName} Dashboard
         </h1>
         <p className="text-gray-500">
-          Track and manage your startup&apos; performance metrics
+          Track and manage your startup&apos;s performance metrics
         </p>
       </div>
 
@@ -266,34 +277,33 @@ const StartupDashboard: React.FC<StartupDashboardProps> = ({
               <CardHeader>
                 <CardTitle>Sentiment Analysis</CardTitle>
                 <CardDescription>
-                  Positive vs. Negative feedback by category
+                  Positive, Negative, and Neutral feedback
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-80 w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={performanceMetrics.sentimentAnalysis}
-                      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="category" />
-                      <YAxis />
+                    <PieChart>
+                      <Pie
+                        data={sentimentData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label
+                      >
+                        {sentimentData.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        ))}
+                      </Pie>
                       <Tooltip />
                       <Legend />
-                      <Bar
-                        dataKey="positive"
-                        stackId="a"
-                        fill="#10b981"
-                        name="Positive %"
-                      />
-                      <Bar
-                        dataKey="negative"
-                        stackId="a"
-                        fill="#ef4444"
-                        name="Negative %"
-                      />
-                    </BarChart>
+                    </PieChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>

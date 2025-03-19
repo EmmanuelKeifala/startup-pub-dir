@@ -6,6 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 
+import Sentiment from "sentiment";
+
+const sentiment = new Sentiment();
+
 // Validation schema for review data
 const reviewSchema = z.object({
   startupId: z.string().uuid(),
@@ -50,6 +54,14 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       );
     }
+    const analysis = sentiment.analyze(comment);
+
+    const sentimentLabel =
+      analysis.score > 0
+        ? "positive"
+        : analysis.score < 0
+        ? "negative"
+        : "neutral";
 
     // Insert new review into the database
     const [newReview] = await db
@@ -59,6 +71,7 @@ export async function POST(request: NextRequest) {
         startupId,
         rating,
         comment,
+        sentiment: sentimentLabel,
       })
       .returning();
 
@@ -74,11 +87,11 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     revalidatePath(`/startup/${startupId}`);
-    
+
     // Return the newly created review with user details
     return NextResponse.json(
       {
-        ...newReview,
+        // ...newReview,
         user:
           user.length > 0
             ? {

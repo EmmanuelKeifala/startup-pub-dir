@@ -176,7 +176,6 @@ export async function fetchStartupStats(startupId: string) {
       : 0;
 
   // Calculate users who left without reviewing
-  // This is an approximation: views - reviews for the last month
   const usersLeftWithoutReview = Math.max(
     0,
     currentMonthViews - (historicalViewsResult[5]?.reviews || 0)
@@ -193,14 +192,50 @@ export async function fetchStartupStats(startupId: string) {
         )
       : 0;
 
-  // Placeholder for sentiment analysis - TODO: implement actual sentiment analysis
-  const sentimentAnalysis = [
-    { category: "UX/UI", positive: 85, negative: 15 },
-    { category: "Features", positive: 70, negative: 30 },
-    { category: "Support", positive: 60, negative: 40 },
-    { category: "Pricing", positive: 90, negative: 10 },
-    { category: "Performance", positive: 75, negative: 25 },
-  ];
+  // Fetch sentiment data from reviews
+  const sentimentData = await db
+    .select({
+      sentiment: reviews.sentiment,
+      count: count(),
+    })
+    .from(reviews)
+    .where(eq(reviews.startupId, startupId))
+    .groupBy(reviews.sentiment);
+
+  // Aggregate sentiment data into negative, positive, and neutral
+  const sentimentAnalysis = {
+    positive: 0,
+    negative: 0,
+    neutral: 0,
+  };
+
+  sentimentData.forEach(({ sentiment, count }) => {
+    if (sentiment === "positive") {
+      sentimentAnalysis.positive += count || 0;
+    } else if (sentiment === "negative") {
+      sentimentAnalysis.negative += count || 0;
+    } else {
+      sentimentAnalysis.neutral += count || 0;
+    }
+  });
+
+  // Calculate percentages
+  const totalSentimentReviews =
+    sentimentAnalysis.positive +
+    sentimentAnalysis.negative +
+    sentimentAnalysis.neutral;
+
+  if (totalSentimentReviews > 0) {
+    sentimentAnalysis.positive = Math.round(
+      (sentimentAnalysis.positive / totalSentimentReviews) * 100
+    );
+    sentimentAnalysis.negative = Math.round(
+      (sentimentAnalysis.negative / totalSentimentReviews) * 100
+    );
+    sentimentAnalysis.neutral = Math.round(
+      (sentimentAnalysis.neutral / totalSentimentReviews) * 100
+    );
+  }
 
   // Placeholder for common keywords - TODO: implement keyword extraction
   const commonKeywords = [

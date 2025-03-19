@@ -9,6 +9,8 @@ async function Layout({ children }: { children: React.ReactNode }) {
 
   if (!session?.user?.id) redirect("/sign-in");
 
+  if (session?.user?.role === "user") redirect("/");
+
   return (
     <main className="flex min-h-screen w-full">
       <div className="w-64">

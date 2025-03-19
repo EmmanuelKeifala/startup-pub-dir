@@ -52,7 +52,11 @@ function Header() {
     {
       href: "/admin",
       label:
-        session?.user?.role !== "admin" ? "Manage Startups" : "Manage Startup",
+        session?.user?.role === "admin"
+          ? "Manage Startups"
+          : session?.user.role === "startup_owner"
+          ? "Manage Startup"
+          : null,
     },
     {
       href: "/sign-in",
