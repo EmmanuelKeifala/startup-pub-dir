@@ -85,7 +85,7 @@ interface AdminDashboardProps {
   adminData: AdminDashboardData;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ adminData }) => {
+function AdminDashboard({ adminData }: AdminDashboardProps) {
   const { stats, performanceMetrics } = adminData;
   const ratingPercentage = (stats.averageRating / 5) * 100;
 
@@ -360,6 +360,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ adminData }) => {
       </div>
     </div>
   );
-};
+}
 
 export default AdminDashboard;

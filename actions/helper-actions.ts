@@ -135,3 +135,36 @@ export const getUserStartUp = async ({
     return null;
   }
 };
+
+export const getAllPendingStartups = async () => {
+  try {
+    const startupsFromDB = await db
+      .select({
+        id: startups.id,
+        name: startups.name,
+        description: startups.description,
+        location: startups.location,
+        website: startups.website,
+        email: startups.email,
+        phone: startups.phone,
+        logo: startups.logo,
+        video: startups.video,
+        companyColors: startups.companyColors,
+        status: startups.status,
+        rating: startups.rating,
+        categoryId: startups.categoryId,
+        categoryName: startupCategories.name,
+      })
+      .from(startups)
+      .innerJoin(
+        startupCategories,
+        eq(startups.categoryId, startupCategories.id)
+      )
+      .where(eq(startups.status, "pending"));
+
+    return startupsFromDB;
+  } catch (error) {
+    console.log("[SERVER_ERROR_FETCHING_ALL_STARTUPS]: ", error);
+    return [];
+  }
+};
