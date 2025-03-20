@@ -2,7 +2,7 @@
 
 import db from "@/database/drizzle";
 import { reviews, startupCategories, startups, users } from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const getStartUp = async ({ params }: { params: { id: string } }) => {
   try {
@@ -29,7 +29,7 @@ export const getStartUp = async ({ params }: { params: { id: string } }) => {
         startupCategories,
         eq(startups.categoryId, startupCategories.id)
       )
-      .where(eq(startups.id, params.id));
+      .where(and(eq(startups.status, "approved"), eq(startups.id, params.id)));
 
     return startUpDetails || null;
   } catch (error) {
@@ -83,13 +83,14 @@ export const getAllStartUps = async () => {
         status: startups.status,
         rating: startups.rating,
         categoryId: startups.categoryId,
-        categoryName: startupCategories.name, // Include the category name
+        categoryName: startupCategories.name,
       })
       .from(startups)
       .innerJoin(
         startupCategories,
         eq(startups.categoryId, startupCategories.id)
-      );
+      )
+      .where(eq(startups.status, "approved"));
 
     return startupsFromDB;
   } catch (error) {

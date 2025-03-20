@@ -1,11 +1,10 @@
 import {
   Home,
-  Users,
   Building,
   CheckCircle,
   Settings,
   Eye,
-  FileText,
+  Check,
 } from "lucide-react";
 
 export const adminSideBarLinks = (isSuperAdmin: boolean) => {
@@ -32,9 +31,9 @@ export const adminSideBarLinks = (isSuperAdmin: boolean) => {
       text: "Startup Approvals",
     },
     {
-      icon: FileText,
-      route: "/admin/logs",
-      text: "Activity Logs",
+      icon: Check,
+      route: "/admin/startups",
+      text: "All StartUps",
     },
     {
       icon: Eye,

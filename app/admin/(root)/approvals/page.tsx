@@ -6,7 +6,7 @@ async function page() {
   const data = await getAllPendingStartups();
   return (
     <div>
-      <StartupTable data={data} />
+      <StartupTable type="pending" data={data} />
     </div>
   );
 }

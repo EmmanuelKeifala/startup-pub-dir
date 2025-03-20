@@ -42,6 +42,7 @@ type StartupStatus = "pending" | "approved" | "rejected";
 
 interface StartupTableProps {
   data: Startup[];
+  type: "pending" | "approved" | "rejected";
 }
 
 interface TableStartupData {
@@ -59,7 +60,7 @@ interface EmptyStateProps {
   text: string;
 }
 
-const StartupTable: FC<StartupTableProps> = ({ data }) => {
+const StartupTable: FC<StartupTableProps> = ({ data, type }) => {
   const router = useRouter();
   const [searchText, setSearchText] = useState<string>("");
   const [searchedColumn, setSearchedColumn] = useState<string>("");
@@ -363,35 +364,51 @@ const StartupTable: FC<StartupTableProps> = ({ data }) => {
         );
       },
     },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record: TableStartupData) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button type="text" icon={<MoreOutlined />} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => handleView(record)}>
-              <EyeOutlined />
-              View Details
-            </DropdownMenuItem>
-            {record.status === "pending" && (
-              <>
-                <DropdownMenuItem onClick={() => handleApprove(record)}>
-                  <CheckCircleOutlined />
-                  Approve
+    type === "pending"
+      ? {
+          title: "Actions",
+          key: "actions",
+          render: (_, record: TableStartupData) => (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button type="text" icon={<MoreOutlined />} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleView(record)}>
+                  <EyeOutlined />
+                  View Details
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleReject(record)}>
-                  <CloseCircleOutlined />
-                  Reject
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    },
+                {record.status === "pending" && (
+                  <>
+                    <DropdownMenuItem onClick={() => handleApprove(record)}>
+                      <CheckCircleOutlined />
+                      Approve
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleReject(record)}>
+                      <CloseCircleOutlined />
+                      Reject
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ),
+        }
+      : {
+          title: "Actions",
+          key: "actions",
+          render: (_, record: TableStartupData) => (
+            <Space size="middle">
+              <Button
+                type="primary"
+                icon={<EyeOutlined />}
+                onClick={() => handleView(record)}
+              >
+                View
+              </Button>
+            </Space>
+          ),
+        },
   ];
 
   const tableData: TableStartupData[] = validData.map((item) => ({
@@ -445,7 +462,7 @@ const StartupTable: FC<StartupTableProps> = ({ data }) => {
         title={
           <div className="flex items-center justify-between">
             <Title level={4} style={{ margin: 0 }}>
-              Startup Applications
+              {type === "pending" ? "Pending Startups" : "All Startups"}
             </Title>
           </div>
         }
