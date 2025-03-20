@@ -8,7 +8,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Star,
+  Eye,
+  MessageSquare,
+  TrendingUp,
+  ThumbsUp,
+  AlertCircle,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 interface Review {
   user: string;
   rating: number;
@@ -62,32 +84,6 @@ interface StartupDashboardProps {
   startupData: StartupData;
   startupName?: string;
 }
-
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Star,
-  Eye,
-  MessageSquare,
-  TrendingUp,
-  ThumbsUp,
-  AlertCircle,
-} from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Legend,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
 
 const StartupDashboard: React.FC<StartupDashboardProps> = ({
   startupData,

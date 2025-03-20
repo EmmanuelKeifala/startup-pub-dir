@@ -1,13 +1,9 @@
 import React from "react";
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import db from "@/database/drizzle";
-import { reviews, startupCategories, startups, users } from "@/database/schema";
+
 import { StartUpOverview } from "@/components/app-components";
-import Link from "next/link";
-import { Edit } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import StartUpDetails, {
   StartupDetails,
 } from "@/components/app-components/StartUpDetails";

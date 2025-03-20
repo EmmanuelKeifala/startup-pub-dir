@@ -113,7 +113,7 @@ function AdminDashboard({ adminData }: AdminDashboardProps) {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
         <p className="text-gray-500">
-          Track and manage all startups' performance metrics
+          Track and manage all startup&apos; performance metrics
         </p>
       </div>
 

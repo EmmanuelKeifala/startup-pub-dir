@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     // Return the newly created review with user details
     return NextResponse.json(
       {
-        // ...newReview,
+        ...newReview,
         user:
           user.length > 0
             ? {
