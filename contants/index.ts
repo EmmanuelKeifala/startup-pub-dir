@@ -5,6 +5,7 @@ import {
   Settings,
   Eye,
   Check,
+  BriefcaseBusiness,
 } from "lucide-react";
 
 export const adminSideBarLinks = (isSuperAdmin: boolean) => {
@@ -21,6 +22,11 @@ export const adminSideBarLinks = (isSuperAdmin: boolean) => {
       icon: Building,
       route: "/admin/my-startup",
       text: "My Startup",
+    },
+    {
+      icon: BriefcaseBusiness,
+      route: "/admin/add-jobs",
+      text: "StartUp Jobs",
     },
   ];
 

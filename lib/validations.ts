@@ -43,3 +43,15 @@ export const registerStartUpSchema = z.object({
   video: z.string().url().optional(),
   companyColors: z.string().max(50).optional(),
 });
+
+
+export const jobFormSchema = z.object({
+  title: z.string().min(1, "Title is required").max(255, "Title is too long"),
+  description: z.string().min(1, "Description is required"),
+  requirements: z.string().optional(),
+  salary: z.string().optional(),
+  jobType: z.string().optional(),
+  location: z.string().min(1, "Location is required"),
+  contactEmail: z.string().email("Invalid email address"),
+  expiresAt: z.date().optional(),
+});

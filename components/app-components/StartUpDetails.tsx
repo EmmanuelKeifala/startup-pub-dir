@@ -20,6 +20,7 @@ import StartupReviews, {
 import { Session } from "next-auth";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import JobListings from "./JobListing";
 
 // Type definition for startup details
 export type StartupDetails = {
@@ -179,8 +180,16 @@ function StartUpDetails({
             </div>
           </div>
         </motion.section>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="rounded-xl shadow-xl overflow-hidden backdrop-blur-sm"
+          style={gradientStyle}
+        >
+          <JobListings />
+        </motion.div>
       </div>
-
       {/* Sidebar */}
       <motion.div
         className="lg:col-span-1"

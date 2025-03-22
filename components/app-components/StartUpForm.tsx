@@ -26,7 +26,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { registerStartUpSchema } from "@/lib/validations";
 import FileUpload from "./FileUpload";
-import { Loader } from "lucide-react";
+import { Loader, PlusCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 const FIELD_NAMES = {
   name: "Startup Name",
@@ -73,6 +74,13 @@ function StartupForm({
     defaultValues,
   });
 
+  // Get accent color based on type
+  const accentColor = "#6366F1"; // Indigo color from AboutUs
+  const gradientStyle = {
+    background: `linear-gradient(135deg, ${accentColor}22 0%, #12141d 50%, #12151f 100%)`,
+    borderLeft: `3px solid ${accentColor}`,
+  };
+
   const handleSubmit = async (data: StartupFormValues) => {
     try {
       setIsLoading(true);
@@ -88,13 +96,11 @@ function StartupForm({
         setIsLoading(false);
       } else {
         setIsLoading(false);
-
         console.log(result?.error);
         toast.error(result?.error || "Something went wrong");
       }
     } catch (error) {
       setIsLoading(false);
-
       console.error("Form submission error:", error);
       toast.error("Failed to submit form");
     } finally {
@@ -117,304 +123,311 @@ function StartupForm({
   };
 
   return (
-    <Card
-      className={`${
-        type === "create" ? "w-full text-white" : "w-full text-black"
-      }`}
-      style={{
-        background: `${
-          type === "create"
-            ? "linear-gradient(180deg, #12141d 0%, #12151f 100%)"
-            : ""
-        }`,
-      }}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <CardHeader>
-        <CardTitle className="text-2xl font-semibold">
-          {type === "create"
-            ? "Add New Startup"
-            : "Update your start up profile"}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-8"
-          >
-            {/* Basic Information Section */}
-            <div>
-              <h2 className="text-lg font-medium mb-4">Basic Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FIELD_NAMES.name}</FormLabel>
-                      <FormControl>
-                        <Input
-                          required
-                          className={` ${
-                            type === "create"
-                              ? "text-white form-input"
-                              : "text-black"
-                          }`}
-                          placeholder="Your startup name"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="categoryId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FIELD_NAMES.categoryId}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger
-                          className={` ${
-                            type === "create"
-                              ? "text-white form-input"
-                              : "text-black"
-                          }`}
-                        >
-                          <SelectValue placeholder="Select Category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FIELD_NAMES.location}</FormLabel>
-                      <FormControl>
-                        <Input
-                          required
-                          className={` ${
-                            type === "create"
-                              ? "text-white form-input"
-                              : "text-black"
-                          }`}
-                          placeholder="City, Country"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="website"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FIELD_NAMES.website}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="url"
-                          className={` ${
-                            type === "create"
-                              ? "text-white form-input"
-                              : "text-black"
-                          }`}
-                          placeholder="https://example.com"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="mt-4">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FIELD_NAMES.description}</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          required
-                          className={` min-h-28 ${
-                            type === "create"
-                              ? "text-white form-input "
-                              : "text-black"
-                          }`}
-                          placeholder="Describe your startup..."
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Contact Information Section */}
-            <div>
-              <h2 className="text-lg font-medium mb-4">Contact Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="contact.email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FIELD_NAMES["contact.email"]}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          className={` ${
-                            type === "create"
-                              ? "text-white form-input"
-                              : "text-black"
-                          }`}
-                          placeholder="contact@yourstartup.com"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="contact.phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FIELD_NAMES["contact.phone"]}</FormLabel>
-                      <FormControl>
-                        <Input
-                          className={` ${
-                            type === "create"
-                              ? "text-white form-input"
-                              : "text-black"
-                          }`}
-                          placeholder="+232 555-123-4567"
-                          {...field}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="contact.social"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{FIELD_NAMES["contact.social"]}</FormLabel>
-                      <FormControl>
-                        <Input
-                          className={` ${
-                            type === "create"
-                              ? "text-white form-input"
-                              : "text-black"
-                          }`}
-                          placeholder="https://twitter.com/yourstartup"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs">
-                        Link to primary social media profile
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Media & Brand Section */}
-            <div>
-              <h2 className="text-lg font-medium mb-4">Media & Brand</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="logo"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>{FIELD_NAMES.logo}</FormLabel>
-                      <FormControl>
-                        <div className="h-32 w-full">
-                          <FileUpload
-                            type="image"
-                            accept="image/*"
-                            placeholder="Upload Logo"
-                            folder="logos"
-                            variant={type === "create" ? "dark" : "light"}
-                            onFileChange={field.onChange}
-                          />
-                        </div>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <div className="space-y-4">
+      <Card
+        className="w-full text-white shadow-xl overflow-hidden backdrop-blur-sm"
+        style={type === "create" ? gradientStyle : {}}
+      >
+        <CardHeader className="border-b border-white/10 pb-6">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            {type === "create"
+              ? "Add Your Startup to Our Directory"
+              : "Update Your Startup Profile"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-8">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-10"
+            >
+              {/* Basic Information Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+              >
+                <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Basic Information
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
-                    name="video"
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{FIELD_NAMES.video}</FormLabel>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES.name}
+                        </FormLabel>
                         <FormControl>
-                          <div className="h-32 w-full">
+                          <Input
+                            required
+                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            placeholder="Your startup name"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="categoryId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES.categoryId}
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                            <SelectValue placeholder="Select Category" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#12141d] border-white/10 text-white">
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES.location}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            required
+                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            placeholder="City, Country"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="website"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES.website}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="url"
+                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            placeholder="https://example.com"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="mt-6">
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES.description}
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            required
+                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white min-h-32"
+                            placeholder="Describe your startup's mission, vision, and unique value proposition..."
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </motion.div>
+
+              {/* Contact Information Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+              >
+                <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Contact Information
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="contact.email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES["contact.email"]}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            placeholder="contact@yourstartup.com"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="contact.phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES["contact.phone"]}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            placeholder="+232 555-123-4567"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="contact.social"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES["contact.social"]}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            placeholder="https://twitter.com/yourstartup"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription className="text-gray-400 text-xs">
+                          Link to your primary social media profile
+                        </FormDescription>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </motion.div>
+
+              {/* Media & Brand Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              >
+                <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Media & Brand
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <FormField
+                    control={form.control}
+                    name="logo"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES.logo}
+                        </FormLabel>
+                        <FormControl>
+                          <div className="h-40 w-full bg-white/5 rounded-xl border border-dashed border-white/20 flex items-center justify-center overflow-hidden">
                             <FileUpload
-                              type="video"
-                              accept="video/*"
+                              type="image"
+                              accept="image/*"
                               placeholder="Upload Logo"
-                              folder="videos"
-                              variant={type === "create" ? "dark" : "light"}
+                              folder="logos"
+                              variant="dark"
                               onFileChange={field.onChange}
                             />
                           </div>
                         </FormControl>
-                        <FormDescription className="text-xs">
-                          Link to a video introducing your startup
+                        <FormDescription className="text-gray-400 text-xs mt-2">
+                          Upload a high-quality logo (PNG or SVG recommended)
                         </FormDescription>
                       </FormItem>
                     )}
                   />
 
-                  {/* Color Picker */}
+                  <FormField
+                    control={form.control}
+                    name="video"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES.video}
+                        </FormLabel>
+                        <FormControl>
+                          <div className="h-40 w-full bg-white/5 rounded-xl border border-dashed border-white/20 flex items-center justify-center overflow-hidden">
+                            <FileUpload
+                              type="video"
+                              accept="video/*"
+                              placeholder="Upload Video"
+                              folder="videos"
+                              variant="dark"
+                              onFileChange={field.onChange}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormDescription className="text-gray-400 text-xs mt-2">
+                          Share a short video introducing your startup (2
+                          minutes max)
+                        </FormDescription>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="mt-8">
                   <FormField
                     control={form.control}
                     name="companyColors"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{FIELD_NAMES.companyColors}</FormLabel>
+                        <FormLabel className="text-gray-300 text-base">
+                          {FIELD_NAMES.companyColors}
+                        </FormLabel>
                         <FormControl>
-                          <div className="space-y-2">
+                          <div className="space-y-3">
                             {companyColors.map((color, index) => (
                               <div
                                 key={index}
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-3 bg-white/5 p-2 rounded-lg"
                               >
                                 <input
                                   type="color"
-                                  value={color || "#000000"}
+                                  value={color || "#6366F1"}
                                   onChange={(e) =>
                                     updateColor(index, e.target.value)
                                   }
-                                  className="h-8 w-12 rounded cursor-pointer"
+                                  className="h-10 w-14 rounded cursor-pointer border-0"
                                 />
                                 <Input
                                   value={color || ""}
@@ -422,26 +435,23 @@ function StartupForm({
                                     updateColor(index, e.target.value)
                                   }
                                   placeholder="#RRGGBB"
-                                  className={`flex-1 ${
-                                    type === "create"
-                                      ? "text-white form-input "
-                                      : "text-black"
-                                  }`}
+                                  className="flex-1 bg-white/5 border-white/10 focus:border-indigo-400 text-white"
                                 />
                               </div>
                             ))}
                             <Button
                               type="button"
-                              variant="outline"
                               onClick={addColorField}
-                              className="text-black text-base"
+                              className="mt-2 bg-indigo-600/20 border border-indigo-400/30 hover:bg-indigo-600/30 text-white flex items-center gap-2"
                             >
-                              + Add Another Color
+                              <PlusCircle className="w-4 h-4" />
+                              Add Brand Color
                             </Button>
                           </div>
                         </FormControl>
-                        <FormDescription className="text-xs">
-                          Select your brand colors
+                        <FormDescription className="text-gray-400 text-xs mt-2">
+                          Select your brand colors to help us personalize your
+                          profile
                         </FormDescription>
                         {/* Hidden input that holds the comma-separated color values */}
                         <input type="hidden" {...field} />
@@ -449,18 +459,34 @@ function StartupForm({
                     )}
                   />
                 </div>
-              </div>
-            </div>
+              </motion.div>
 
-            <div className="flex justify-end">
-              <Button type="submit" className="form-btn w-32 cursor-pointer">
-                {!isLoading ? "Submit" : <Loader className="animate-spin" />}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.4 }}
+                className="flex justify-end mt-10 pt-6 border-t border-white/10"
+              >
+                <Button
+                  type="submit"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 rounded-lg font-medium text-base flex items-center gap-2"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader className="animate-spin h-5 w-5" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>Submit Startup</>
+                  )}
+                </Button>
+              </motion.div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
