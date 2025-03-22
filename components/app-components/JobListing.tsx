@@ -52,6 +52,10 @@ function JobListings({ initialJobs, jobTypes, locations }: JobListingsProps) {
   const [selectedType, setSelectedType] = useState<string>("all");
   const [selectedLocation, setSelectedLocation] = useState<string>("all");
 
+  if (jobs.length === 0) {
+    return;
+  }
+
   // Filter jobs based on search query and filters
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
@@ -290,8 +294,7 @@ function JobListings({ initialJobs, jobTypes, locations }: JobListingsProps) {
                   No jobs found
                 </h3>
                 <p className="mt-2 text-gray-400 max-w-md mx-auto">
-                  We couldn't find any jobs matching your current filters. Try
-                  adjusting your search criteria.
+                  We couldn't find any jobs found for this startup
                 </p>
                 <Button
                   className="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white"

@@ -193,11 +193,13 @@ function StartUpDetails({
           className="rounded-xl shadow-xl overflow-hidden backdrop-blur-sm"
           style={gradientStyle}
         >
-          <JobListings
-            locations={locations as string[]}
-            initialJobs={listedJobs as Job[]}
-            jobTypes={jobTypes as string[]}
-          />
+          {session?.user && (
+            <JobListings
+              locations={locations as string[]}
+              initialJobs={listedJobs as Job[]}
+              jobTypes={jobTypes as string[]}
+            />
+          )}
         </motion.div>
       </div>
       {/* Sidebar */}
