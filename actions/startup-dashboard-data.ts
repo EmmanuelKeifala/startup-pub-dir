@@ -44,14 +44,10 @@ export async function fetchStartupStats(startupId: string) {
 
   const totalViews = viewsCountResult[0]?.count || 0;
 
-  // Get pending approvals (reviews awaiting replies)
   const pendingApprovalsResult = await db
     .select({ count: count() })
-    .from(reviews)
-    .leftJoin(reviewReplies, eq(reviews.id, reviewReplies.reviewId))
-    .where(
-      and(eq(reviews.startupId, startupId), sql`${reviewReplies.id} IS NULL`)
-    );
+    .from(startups)
+    .where(eq(startups.status, "pending"));
 
   const pendingApprovals = pendingApprovalsResult[0]?.count || 0;
 
@@ -300,9 +296,8 @@ export async function fetchAdminDashboardData() {
   // Get pending approvals (reviews awaiting replies) across all startups
   const pendingApprovalsResult = await db
     .select({ count: count() })
-    .from(reviews)
-    .leftJoin(reviewReplies, eq(reviews.id, reviewReplies.reviewId))
-    .where(sql`${reviewReplies.id} IS NULL`);
+    .from(startups)
+    .where(eq(startups.status, "pending"));
 
   const pendingApprovals = pendingApprovalsResult[0]?.count || 0;
 

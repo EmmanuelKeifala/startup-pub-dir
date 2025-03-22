@@ -1,3 +1,4 @@
+import { getUserStartUp } from "@/actions/helper-actions";
 import {
   fetchAdminDashboardData,
   fetchStartupStats,
@@ -17,21 +18,23 @@ async function Home() {
     redirect("/sign-in");
   }
 
-  const startupData = await fetchStartupStats(
-    "7f9e98ce-1ab4-450b-a0de-bc36b5d452e5" // TODO: set real startup
-  );
-
-  const adminData = await fetchAdminDashboardData();
-
   if (session?.user.role === "startup_owner") {
+    const userStartUp = await getUserStartUp({
+      params: {
+        id: session?.user.id,
+      },
+    });
+
+    const startupData = await fetchStartupStats(userStartUp?.id as string);
     return (
       <StartupDashboard
-        startupName="Life Blood"
+        startupName={userStartUp?.name}
         startupData={startupData as unknown as StartupData}
       />
     );
   }
   if (session?.user.role === "admin") {
+    const adminData = await fetchAdminDashboardData();
     return <AdminDashboard adminData={adminData} />;
   }
 }

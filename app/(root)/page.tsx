@@ -11,7 +11,7 @@ export default async function Home() {
   const hasStartups = startupsFromDB && startupsFromDB.length > 0;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="max-w-6xl mx-auto px-4 py-10 gap-4">
       {hasStartups ? (
         <>
           <StartUpOverview {...startupsFromDB[0]} />
