@@ -106,3 +106,19 @@ export const startupViews = pgTable("startup_views", {
   userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
   viewedAt: timestamp("viewed_at").notNull().defaultNow(),
 });
+
+export const jobs = pgTable("jobs", {
+  id: uuid("id").primaryKey().notNull().defaultRandom().unique(),
+  startupId: uuid("startup_id")
+    .references(() => startups.id, { onDelete: "cascade" })
+    .notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  requirements: text("requirements"),
+  salary: varchar("salary", { length: 100 }), // Example: "$5000 - $7000/month"
+  jobType: varchar("job_type", { length: 50 }), // Example: "Full-time", "Part-time", "Remote"
+  location: varchar("location", { length: 255 }).notNull(),
+  contactEmail: text("contact_email").notNull(),
+  postedAt: timestamp("posted_at").notNull().defaultNow(),
+  expiresAt: timestamp("expires_at"),
+});

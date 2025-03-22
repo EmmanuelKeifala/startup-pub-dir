@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -27,16 +27,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader } from "lucide-react";
 import { format } from "date-fns";
 import { jobFormSchema } from "@/lib/validations";
 import { motion } from "framer-motion";
+import { addJob } from "@/actions/jobs";
+import { toast } from "sonner";
 
 type JobFormValues = z.infer<typeof jobFormSchema>;
 
 const jobTypes = ["Full-time", "Part-time", "Remote", "Contract", "Internship"];
 
 export default function JobPostingForm() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobFormSchema),
     defaultValues: {
@@ -51,9 +55,20 @@ export default function JobPostingForm() {
     },
   });
 
-  const onSubmit = (data: JobFormValues) => {
-    console.log("Form data submitted:", data);
-    // Handle form submission (e.g., send data to an API)
+  const onSubmit = async (data: JobFormValues) => {
+    setIsLoading(true);
+    const response = await addJob(data);
+    if (response?.success) {
+      toast.success("Job Listed Successfully");
+      form.reset();
+      setIsLoading(false);
+    }
+    if (response?.error) {
+      toast.error(response.error);
+      setIsLoading(false);
+    }
+    setIsLoading(false);
+    form.reset();
   };
 
   return (
@@ -258,7 +273,14 @@ export default function JobPostingForm() {
               type="submit"
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
             >
-              Post Job
+              {isLoading ? (
+                <>
+                  <Loader className="animate-spin h-5 w-5" />
+                  Processing...
+                </>
+              ) : (
+                <>Post Job</>
+              )}
             </Button>
           </form>
         </Form>

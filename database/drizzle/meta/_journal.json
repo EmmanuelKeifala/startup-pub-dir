@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1741834140967,
-      "tag": "0000_sweet_madelyne_pryor",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1742073884322,
-      "tag": "0001_right_mysterio",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1742409461805,
-      "tag": "0002_melted_hannibal_king",
+      "when": 1742684697918,
+      "tag": "0000_small_toxin",
       "breakpoints": true
     }
   ]

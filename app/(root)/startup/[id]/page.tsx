@@ -10,6 +10,8 @@ import StartUpDetails, {
 import { Session } from "next-auth";
 import { getStartUpReviews, getStartUp } from "@/actions/helper-actions";
 import { Startup } from "@/types/general";
+import { getJobs } from "@/actions/jobs";
+import { Job } from "@/components/app-components/JobListing";
 
 interface StartUpProps {
   params: { id: string } | Promise<{ id: string }>;
@@ -33,6 +35,8 @@ async function StartUp({ params }: StartUpProps) {
 
   if (!startUpDetails) redirect("/");
 
+  const response = await getJobs(id);
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl text-white">
       {/* Overview Section  */}
@@ -45,6 +49,9 @@ async function StartUp({ params }: StartUpProps) {
         session={session as Session}
         startUpDetails={startUpDetails as StartupDetails}
         initialReviews={initialReviews}
+        listedJobs={response?.listedJobs as Job[]}
+        jobTypes={response?.jobTypes as string[]}
+        locations={response?.locations as string[]}
       />
     </div>
   );

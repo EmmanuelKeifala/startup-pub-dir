@@ -20,7 +20,7 @@ import StartupReviews, {
 import { Session } from "next-auth";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import JobListings from "./JobListing";
+import JobListings, { Job } from "./JobListing";
 
 // Type definition for startup details
 export type StartupDetails = {
@@ -71,10 +71,16 @@ function StartUpDetails({
   startUpDetails,
   initialReviews,
   session,
+  listedJobs,
+  jobTypes,
+  locations,
 }: {
   startUpDetails: StartupQueryResult;
   initialReviews?: ReviewQueryResult;
   session: Session;
+  listedJobs?: Job[];
+  jobTypes?: string[];
+  locations?: string[];
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -187,7 +193,11 @@ function StartUpDetails({
           className="rounded-xl shadow-xl overflow-hidden backdrop-blur-sm"
           style={gradientStyle}
         >
-          <JobListings />
+          <JobListings
+            locations={locations as string[]}
+            initialJobs={listedJobs as Job[]}
+            jobTypes={jobTypes as string[]}
+          />
         </motion.div>
       </div>
       {/* Sidebar */}
