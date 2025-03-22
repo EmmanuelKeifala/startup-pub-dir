@@ -101,7 +101,7 @@ function AboutUs() {
             </div>
             <div className="md:w-1/2">
               <div className="bg-white/5 rounded-xl p-6 h-full">
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-white/5 p-5 rounded-lg">
                     <Users className="h-10 w-10 text-indigo-400 mb-3" />
                     <h3 className="font-medium text-xl mb-2">Visibility</h3>
