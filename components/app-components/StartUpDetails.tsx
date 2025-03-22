@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ExternalLink,
   Star,
@@ -7,6 +7,10 @@ import {
   Mail,
   Phone,
   MapPin,
+  ChevronDown,
+  ChevronUp,
+  Play,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import StartUpVideo from "@/components/app-components/StartUpVideo";
@@ -14,6 +18,8 @@ import StartupReviews, {
   Review,
 } from "@/components/app-components/review-components/StartUpReview";
 import { Session } from "next-auth";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 // Type definition for startup details
 export type StartupDetails = {
@@ -69,77 +75,147 @@ function StartUpDetails({
   initialReviews?: ReviewQueryResult;
   session: Session;
 }) {
+  const [expanded, setExpanded] = useState(false);
+
+  // Process the description to create a shortened version
+  const fullDescription = startUpDetails.description;
+  const paragraphs = fullDescription.split("\n");
+  const shortDescription =
+    paragraphs.length > 2
+      ? paragraphs.slice(0, 2).join("\n")
+      : paragraphs[0].length > 300
+      ? paragraphs[0].substring(0, 300) + "..."
+      : fullDescription;
+
+  const shouldShowReadMore =
+    paragraphs.length > 2 || paragraphs[0].length > 300;
+
+  const accentColor = startUpDetails.companyColors?.primary || "#6366F1";
+  const secondaryColor = startUpDetails.companyColors?.secondary || "#4F46E5";
+
+  // Create a gradient style based on company colors
+  const gradientStyle = {
+    background: `linear-gradient(135deg, ${accentColor}22 0%, #12141d 50%, #12151f 100%)`,
+    borderLeft: `3px solid ${accentColor}`,
+  };
+
   useEffect(() => {
     fetch(
       `/api/record-view?startupId=${startUpDetails.id}${
-        session?.user.id ? `&userId=${session?.user.id}` : ""
+        session?.user?.id ? `&userId=${session.user.id}` : ""
       }`
     );
-  }, [startUpDetails.id, session?.user.id]);
+  }, [startUpDetails.id, session?.user?.id]);
+
   return (
     <div className="mt-12 text-white grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Main Content */}
-      <div className="lg:col-span-2">
+      <div className="lg:col-span-2 space-y-8">
         {/* Video Section */}
         {startUpDetails.video && (
-          <section
-            className="mb-12 rounded-xl shadow-md p-6 transition-all hover:shadow-lg"
-            style={{
-              background: "linear-gradient(180deg, #12141d 0%, #12151f 100%)",
-            }}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="rounded-xl shadow-xl overflow-hidden backdrop-blur-sm"
+            style={gradientStyle}
           >
-            <h3 className="text-2xl font-bold mb-6 flex items-center">
-              <span className="mr-2">Company Video</span>
-            </h3>
-            <StartUpVideo videoUrl={startUpDetails.video} />
-          </section>
+            <div className="p-6">
+              <h3 className="text-2xl font-bold mb-6 flex items-center">
+                <Play className="mr-2 text-white/70" />
+                <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  Company Video
+                </span>
+              </h3>
+              <div className="rounded-lg overflow-hidden">
+                <StartUpVideo videoUrl={startUpDetails.video} />
+              </div>
+            </div>
+          </motion.section>
         )}
 
         {/* Summary Section */}
-        <section
-          className="rounded-xl shadow-md p-6 transition-all hover:shadow-lg"
-          style={{
-            background: "linear-gradient(180deg, #12141d 0%, #12151f 100%)",
-          }}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="rounded-xl shadow-xl overflow-hidden backdrop-blur-sm"
+          style={gradientStyle}
         >
-          <h3 className="text-2xl font-bold mb-6 flex items-center">
-            <span>Summary</span>
-          </h3>
-          <div className="space-y-5 text-lg">
-            {startUpDetails.description.split("\n").map((line, i) => (
-              <p key={i} className="leading-relaxed">
-                {line}
-              </p>
-            ))}
+          <div className="p-6">
+            <h3 className="text-2xl font-bold mb-6 flex items-center">
+              <Users className="mr-2 text-white/70" />
+              <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                Summary
+              </span>
+            </h3>
+            <div className="space-y-5 text-lg">
+              {(expanded ? paragraphs : shortDescription.split("\n")).map(
+                (line, i) => (
+                  <p key={i} className="leading-relaxed text-gray-300">
+                    {line}
+                  </p>
+                )
+              )}
+
+              {shouldShowReadMore && (
+                <Button
+                  onClick={() => setExpanded(!expanded)}
+                  variant="ghost"
+                  className="mt-4 flex items-center gap-2 text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+                >
+                  {expanded ? (
+                    <>
+                      <ChevronUp className="h-4 w-4" />
+                      <span>Read Less</span>
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-4 w-4" />
+                      <span>Read More</span>
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
-        </section>
+        </motion.section>
       </div>
 
       {/* Sidebar */}
-      <div className="lg:col-span-1">
+      <motion.div
+        className="lg:col-span-1"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <div
-          className="rounded-xl shadow-md p-6 sticky top-6 transition-all hover:shadow-lg"
-          style={{
-            background: "linear-gradient(180deg, #12141d 0%, #12151f 100%)",
-          }}
+          className="rounded-xl shadow-xl p-6 sticky top-6 backdrop-blur-sm"
+          style={gradientStyle}
         >
-          <h3 className="text-2xl font-bold mb-6">Company Details</h3>
+          <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            Company Details
+          </h3>
           <div className="space-y-6">
             {startUpDetails.location && (
-              <div className="flex items-start">
-                <MapPin className="w-5 h-5 mt-1 mr-3 text-gray-400" />
-                <div>
-                  <h4 className="font-medium text-gray-300">Location</h4>
+              <div className="flex items-start group">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-all">
+                  <MapPin className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="ml-3 mt-1">
+                  <h4 className="font-medium text-gray-400">Location</h4>
                   <p className="text-white">{startUpDetails.location}</p>
                 </div>
               </div>
             )}
 
             {startUpDetails.website && (
-              <div className="flex items-start">
-                <ExternalLink className="w-5 h-5 mt-1 mr-3 text-gray-400" />
-                <div>
-                  <h4 className="font-medium text-gray-300">Website</h4>
+              <div className="flex items-start group">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-all">
+                  <ExternalLink className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="ml-3 mt-1">
+                  <h4 className="font-medium text-gray-400">Website</h4>
                   <Link
                     href={startUpDetails.website}
                     target="_blank"
@@ -153,10 +229,12 @@ function StartUpDetails({
             )}
 
             {startUpDetails.email && (
-              <div className="flex items-start">
-                <Mail className="w-5 h-5 mt-1 mr-3 text-gray-400" />
-                <div>
-                  <h4 className="font-medium text-gray-300">Email</h4>
+              <div className="flex items-start group">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-all">
+                  <Mail className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="ml-3 mt-1">
+                  <h4 className="font-medium text-gray-400">Email</h4>
                   <Link
                     href={`mailto:${startUpDetails.email}`}
                     className="text-blue-400 hover:text-blue-300 transition-colors hover:underline"
@@ -168,10 +246,12 @@ function StartUpDetails({
             )}
 
             {startUpDetails.phone && (
-              <div className="flex items-start">
-                <Phone className="w-5 h-5 mt-1 mr-3 text-gray-400" />
-                <div>
-                  <h4 className="font-medium text-gray-300">Phone</h4>
+              <div className="flex items-start group">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-all">
+                  <Phone className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="ml-3 mt-1">
+                  <h4 className="font-medium text-gray-400">Phone</h4>
                   <Link
                     href={`tel:${startUpDetails.phone}`}
                     className="text-blue-400 hover:text-blue-300 transition-colors hover:underline"
@@ -183,10 +263,12 @@ function StartUpDetails({
             )}
 
             {startUpDetails.social && (
-              <div className="flex items-start">
-                <div className="w-5 h-5 mt-1 mr-3 text-gray-400">#</div>
-                <div>
-                  <h4 className="font-medium text-gray-300">Social</h4>
+              <div className="flex items-start group">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-all">
+                  <div className="text-gray-400 font-bold">#</div>
+                </div>
+                <div className="ml-3 mt-1">
+                  <h4 className="font-medium text-gray-400">Social</h4>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {typeof startUpDetails.social === "object" &&
                     startUpDetails.social !== null ? (
@@ -197,7 +279,7 @@ function StartUpDetails({
                             href={String(url)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-400 hover:text-blue-300 transition-colors hover:underline block"
+                            className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded-full text-blue-400 hover:text-blue-300 transition-all text-sm"
                           >
                             {platform}
                           </Link>
@@ -212,10 +294,12 @@ function StartUpDetails({
             )}
 
             {startUpDetails.rating && (
-              <div className="flex items-start">
-                <Star className="w-5 h-5 mt-1 mr-3 text-gray-400" />
-                <div>
-                  <h4 className="font-medium text-gray-300">Rating</h4>
+              <div className="flex items-start group">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-all">
+                  <Star className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="ml-3 mt-1">
+                  <h4 className="font-medium text-gray-400">Rating</h4>
                   <div className="flex items-center">
                     <span className="text-yellow-400 text-lg font-medium">
                       {startUpDetails.rating}
@@ -241,18 +325,20 @@ function StartUpDetails({
             )}
 
             {startUpDetails.status && (
-              <div className="flex items-start">
-                <Activity className="w-5 h-5 mt-1 mr-3 text-gray-400" />
-                <div>
-                  <h4 className="font-medium text-gray-300">Status</h4>
+              <div className="flex items-start group">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-all">
+                  <Activity className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="ml-3 mt-1">
+                  <h4 className="font-medium text-gray-400">Status</h4>
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
                       ${
                         startUpDetails.status === "approved"
-                          ? "bg-green-900 text-green-200"
+                          ? "bg-green-900/50 text-green-200"
                           : startUpDetails.status === "pending"
-                          ? "bg-yellow-900 text-yellow-200"
-                          : "bg-gray-800 text-gray-200"
+                          ? "bg-yellow-900/50 text-yellow-200"
+                          : "bg-gray-800/50 text-gray-200"
                       }`}
                   >
                     {startUpDetails.status}
@@ -262,24 +348,30 @@ function StartUpDetails({
             )}
 
             {startUpDetails.categoryName && (
-              <div className="flex items-start">
-                <div className="w-5 h-5 mt-1 mr-3 text-gray-400">•</div>
-                <div>
-                  <h4 className="font-medium text-gray-300">Category</h4>
-                  <p>{startUpDetails.categoryName}</p>
+              <div className="flex items-start group">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-white/10 transition-all">
+                  <div className="text-gray-400 font-bold">•</div>
+                </div>
+                <div className="ml-3 mt-1">
+                  <h4 className="font-medium text-gray-400">Category</h4>
+                  <span className="px-3 py-1 bg-white/5 rounded-full text-sm">
+                    {startUpDetails.categoryName}
+                  </span>
                 </div>
               </div>
             )}
 
-            <StartupReviews
-              companyColors=""
-              currentUserId={session?.user.id as string}
-              initialReviews={initialReviews as Review[]}
-              startupId={startUpDetails.id}
-            />
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <StartupReviews
+                companyColors=""
+                currentUserId={session?.user?.id as string}
+                initialReviews={initialReviews as Review[]}
+                startupId={startUpDetails.id}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
