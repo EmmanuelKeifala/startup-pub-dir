@@ -9,12 +9,31 @@ type StartUpCoverVariant =
   | "regular"
   | "wide";
 
-const variantStyles: Record<StartUpCoverVariant, string> = {
-  extraSmall: "start-up-cover_extra_small",
-  small: "start-up-cover_small",
-  medium: "start-up-cover_medium",
-  regular: "start-up-cover_regular",
-  wide: "start-up-cover_wide",
+// Define specific aspect ratios for each variant
+const variantConfig: Record<
+  StartUpCoverVariant,
+  { className: string; aspectRatio: string }
+> = {
+  extraSmall: {
+    className: "start-up-cover_extra_small max-w-xs",
+    aspectRatio: "16 / 9",
+  },
+  small: {
+    className: "start-up-cover_small max-w-sm",
+    aspectRatio: "16 / 9",
+  },
+  medium: {
+    className: "start-up-cover_medium max-w-md",
+    aspectRatio: "16 / 9",
+  },
+  regular: {
+    className: "start-up-cover_regular max-w-lg",
+    aspectRatio: "16 / 9",
+  },
+  wide: {
+    className: "start-up-cover_wide max-w-xl",
+    aspectRatio: "16 / 9",
+  },
 };
 
 interface Props {
@@ -22,7 +41,8 @@ interface Props {
   className?: string;
   coverImage?: string;
   accentColor: string;
-  logoPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right"; // Position of the logo
+  logoPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  objectFit?: "cover" | "contain" | "fill";
 }
 
 function StartUpCover({
@@ -31,38 +51,54 @@ function StartUpCover({
   coverImage = "https://placehold.co/1200x800.png",
   logoPosition = "top-left",
   accentColor,
+  objectFit = "cover",
 }: Props) {
+  const config = variantConfig[variant];
+
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden rounded-lg transition-all duration-300 group",
-        variantStyles[variant],
+        "relative overflow-hidden rounded-lg transition-all duration-300 group",
+        config.className,
         className
       )}
       style={{
-        aspectRatio: "16 / 9",
+        aspectRatio: config.aspectRatio,
       }}
     >
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <Image
-          src={coverImage}
-          alt="Start Up image"
-          fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105" // Subtle zoom effect on hover
-          quality={100}
-          priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Responsive image sizes
-        />
+      <div className="absolute inset-0 z-0 overflow-hidden bg-gray-900">
+        {/* Image container with specific dimensions */}
+        <div className="relative w-full h-full">
+          <Image
+            src={coverImage}
+            alt="Start Up image"
+            fill
+            className={cn(
+              "transition-transform duration-700 group-hover:scale-105",
+              objectFit === "cover" && "object-cover",
+              objectFit === "contain" && "object-contain p-2"
+            )}
+            quality={90}
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
       </div>
 
       <div
-        className="absolute inset-0 z-10"
+        className="absolute inset-0 z-10 opacity-80"
         style={{
-          background:
-            "linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1))", // Light gradient overlay
+          background: `linear-gradient(45deg, rgba(0, 0, 0, 0.6), transparent, rgba(${parseInt(
+            accentColor.slice(1, 3),
+            16
+          )}, ${parseInt(accentColor.slice(3, 5), 16)}, ${parseInt(
+            accentColor.slice(5, 7),
+            16
+          )}, 0.1))`,
         }}
       />
 
+      {/* Logo positioning container */}
       <div
         className={cn(
           "absolute z-20 flex items-center justify-center p-4 transition-all duration-300",
@@ -76,9 +112,16 @@ function StartUpCover({
       />
 
       <div
-        className="absolute inset-0 z-30 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="absolute inset-0 z-20 border-2 border-transparent opacity-0 transition-all duration-300 group-hover:opacity-100 rounded-lg"
         style={{
-          boxShadow: `0 0 40px ${accentColor} inset`,
+          borderColor: accentColor,
+        }}
+      />
+
+      <div
+        className="absolute inset-0 z-30 opacity-0 transition-opacity duration-500 group-hover:opacity-60"
+        style={{
+          boxShadow: `0 0 30px ${accentColor} inset`,
         }}
       />
     </div>

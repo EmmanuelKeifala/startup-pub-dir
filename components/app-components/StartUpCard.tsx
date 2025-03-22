@@ -15,7 +15,7 @@ function StartUpCard({ id, categoryName, companyColors, logo, name }: Startup) {
         <StartUpCover
           accentColor={color as string}
           coverImage={logo as string}
-          variant="regular"
+          variant="medium"
         />
 
         <div className="mt-4 xs:mx-w-40">
