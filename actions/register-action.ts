@@ -47,9 +47,9 @@ export const registerStartUp = async (
       .where(eq(startups.ownerId, userExist[0].id))
       .limit(1);
 
-    if (startUpExistForUser.length > 0) {
-      return { success: false, error: "You already have a startup" };
-    }
+    // if (startUpExistForUser.length > 0) {
+    //   return { success: false, error: "You already have a startup" };
+    // }
 
     const {
       name,

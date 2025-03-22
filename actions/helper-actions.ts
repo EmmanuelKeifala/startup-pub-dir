@@ -1,11 +1,23 @@
 "use server";
 
 import db from "@/database/drizzle";
-import { reviews, startupCategories, startups, users } from "@/database/schema";
+import {
+  reviews,
+  startupCategories,
+  startups,
+  users,
+  startupViews,
+} from "@/database/schema";
 import { and, eq } from "drizzle-orm";
 
 export const getStartUp = async ({ params }: { params: { id: string } }) => {
   try {
+    // Track the view
+    await db.insert(startupViews).values({
+      startupId: params.id,
+      userId: null, // Assuming anonymous views, set to null
+    });
+
     const [startUpDetails] = await db
       .select({
         id: startups.id,

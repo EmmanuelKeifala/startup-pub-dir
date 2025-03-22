@@ -35,11 +35,11 @@ export const registerStartUpSchema = z.object({
   location: z.string().min(4, { message: "Location is required" }),
   website: z.string().url(),
   contact: z.object({
-    phone: z.string().max(20),
-    email: z.string().email(),
-    social: z.string(),
+    phone: z.string().max(20).optional(),
+    email: z.string().email().optional(),
+    social: z.string().optional(),
   }),
-  logo: z.string().url(),
-  video: z.string().url(),
-  companyColors: z.string().max(50),
+  logo: z.string().url().optional(),
+  video: z.string().url().optional(),
+  companyColors: z.string().max(50).optional(),
 });

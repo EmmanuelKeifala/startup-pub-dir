@@ -1,6 +1,6 @@
 {
-  "id": "5aaa53ca-7185-4a2d-8fa1-89732ee2a333",
-  "prevId": "6dbc380a-9be0-40c4-b116-0da84ba6861b",
+  "id": "27f14c32-baa1-4b39-82df-e7b3cd20b551",
+  "prevId": "28f7b1bb-bfb7-4d89-892e-77204dcb07cf",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -118,6 +118,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "sentiment": {
+          "name": "sentiment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -278,6 +284,80 @@
           "nullsNotDistinct": false,
           "columns": [
             "name"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.startup_views": {
+      "name": "startup_views",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "startup_id": {
+          "name": "startup_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "viewed_at": {
+          "name": "viewed_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "startup_views_startup_id_startups_id_fk": {
+          "name": "startup_views_startup_id_startups_id_fk",
+          "tableFrom": "startup_views",
+          "tableTo": "startups",
+          "columnsFrom": [
+            "startup_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "startup_views_user_id_users_id_fk": {
+          "name": "startup_views_user_id_users_id_fk",
+          "tableFrom": "startup_views",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "startup_views_id_unique": {
+          "name": "startup_views_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id"
           ]
         }
       },

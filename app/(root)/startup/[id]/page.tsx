@@ -16,7 +16,7 @@ interface StartUpProps {
 }
 
 async function StartUp({ params }: StartUpProps) {
-  const { id } = await (params as Promise<{ id: string }>);
+  const { id } = await params;
   const session = await auth();
 
   const startUpDetails = await getStartUp({
