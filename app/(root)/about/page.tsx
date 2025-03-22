@@ -83,9 +83,9 @@ function AboutUs() {
               </h2>
               <div className="space-y-4 text-gray-300">
                 <p>
-                  At Startup Public Directory, we're on a mission to democratize
-                  visibility for innovative startups around in sierra leone,
-                  regardless of their funding status or location.
+                  At Startup Public Directory, we&lsquo;re on a mission to
+                  democratize visibility for innovative startups around in
+                  sierra leone, regardless of their funding status or location.
                 </p>
                 <p>
                   We believe that great ideas deserve to be seen, and that
@@ -269,8 +269,8 @@ function AboutUs() {
             Ready to Join the Community?
           </h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto">
-            Whether you're a startup founder looking for visibility, an investor
-            seeking opportunities, or an enthusiast wanting to discover
+            Whether you&lsquo;re a startup founder looking for visibility, an
+            investor seeking opportunities, or an enthusiast wanting to discover
             innovation, we welcome you to our platform.
           </p>
           <div className="flex flex-wrap justify-center gap-4">

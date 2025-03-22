@@ -91,7 +91,6 @@ function StartUpDetails({
     paragraphs.length > 2 || paragraphs[0].length > 300;
 
   const accentColor = startUpDetails.companyColors?.primary || "#6366F1";
-  const secondaryColor = startUpDetails.companyColors?.secondary || "#4F46E5";
 
   // Create a gradient style based on company colors
   const gradientStyle = {

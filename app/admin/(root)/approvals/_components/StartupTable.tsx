@@ -1,54 +1,46 @@
 "use client";
 import React, { useRef, useState, FC } from "react";
 import {
-  SearchOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  MoreOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Input,
-  InputRef,
-  Space,
-  Table,
-  ConfigProvider,
-  Tag,
-  Tooltip,
-  Avatar,
-  Badge,
-  Card,
-  Typography,
-} from "antd";
-import type { ColumnType } from "antd/es/table";
-import type { FilterConfirmProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
-import { Startup } from "@/types/general";
+  SearchIcon,
+  CheckIcon,
+  XIcon,
+  MoreHorizontalIcon,
+  EyeIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"; // Import shadcn Dropdown
-import { useRouter } from "next/navigation";
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import db from "@/database/drizzle";
 import { startups } from "@/database/schema";
+import { eq } from "drizzle-orm";
 import { toast } from "sonner";
-
-const { Title, Text } = Typography;
 
 type StartupStatus = "pending" | "approved" | "rejected";
 
-interface StartupTableProps {
-  data: Startup[];
-  type: "pending" | "approved" | "rejected";
-}
-
-interface TableStartupData {
-  key: string;
+interface Startup {
+  id: string;
   name: string;
-  category: string;
+  categoryName: string;
   description: string;
   location: string;
   rating: number;
@@ -56,156 +48,69 @@ interface TableStartupData {
   status: StartupStatus;
 }
 
-interface EmptyStateProps {
-  text: string;
+interface StartupTableProps {
+  data: Startup[];
+  type: "pending" | "approved" | "rejected" | "all";
 }
 
 const StartupTable: FC<StartupTableProps> = ({ data, type }) => {
-  const router = useRouter();
   const [searchText, setSearchText] = useState<string>("");
-  const [searchedColumn, setSearchedColumn] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const searchInput = useRef<InputRef>(null);
+  const [searchColumn, setSearchColumn] = useState<string>("name");
   const tableRef = useRef<HTMLDivElement>(null);
+  const itemsPerPage = 5;
 
   const validData = Array.isArray(data) ? data : [];
 
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: (param?: FilterConfirmProps) => void,
-    dataIndex: string
-  ): void => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
+  const filteredData = validData.filter((item) => {
+    if (!searchText) return true;
 
-  const handleReset = (clearFilters: () => void): void => {
-    clearFilters();
-    setSearchText("");
-  };
-
-  const handleApprove = async (record: TableStartupData): Promise<void> => {
-    await db.update(startups).set({
-      status: "approved",
-    });
-
-    toast.success(`Startup ${record.name} approved!`);
-  };
-
-  const handleReject = async (record: TableStartupData): Promise<void> => {
-    await db.update(startups).set({
-      status: "rejected",
-    });
-    toast.info(`Startup ${record.name} rejected!`);
-  };
-
-  const handleView = (record: TableStartupData): void => {
-    router.push(`/startup/${record.key}`);
-  };
-
-  const getColumnSearchProps = (
-    dataIndex: keyof TableStartupData
-  ): ColumnType<TableStartupData> => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-      close,
-    }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() =>
-            handleSearch(selectedKeys as string[], confirm, dataIndex as string)
-          }
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() =>
-              handleSearch(
-                selectedKeys as string[],
-                confirm,
-                dataIndex as string
-              )
-            }
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              setSearchText(selectedKeys[0] as string);
-              setSearchedColumn(dataIndex as string);
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            Close
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
-    onFilter: (value: boolean | React.Key, record: TableStartupData) => {
-      if (typeof value === "boolean") {
-        return value;
-      }
-
-      const dataValue = record[dataIndex];
-      return dataValue
-        ? dataValue
-            .toString()
-            .toLowerCase()
-            .includes(value.toString().toLowerCase())
-        : false;
-    },
-    onFilterDropdownOpenChange: (visible: boolean) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-    render: (text: string) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
+    const searchValue = item[searchColumn as keyof Startup];
+    if (typeof searchValue === "string") {
+      return searchValue.toLowerCase().includes(searchText.toLowerCase());
+    }
+    return false;
   });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  const handleApprove = async (startup: Startup): Promise<void> => {
+    try {
+      await db
+        .update(startups)
+        .set({
+          status: "approved",
+        })
+        .where(eq(startups.id, startup.id));
+
+      toast.success(`Startup ${startup.name} approved!`);
+    } catch (error) {
+      console.error("Error approving startup:", error);
+      toast.error("Failed to approve startup. Please try again.");
+    }
+  };
+
+  const handleReject = async (startup: Startup): Promise<void> => {
+    try {
+      await db
+        .update(startups)
+        .set({
+          status: "rejected",
+        })
+        .where(eq(startups.id, startup.id));
+
+      toast.success(`Startup ${startup.name} rejected!`);
+    } catch (error) {
+      console.error("Error rejecting startup:", error);
+      toast.error("Failed to reject startup. Please try again.");
+    }
+  };
 
   const getRatingStars = (rating: number) => {
     const fullStars = Math.floor(rating);
@@ -219,282 +124,257 @@ const StartupTable: FC<StartupTableProps> = ({ data, type }) => {
     if (remaining > 0) stars += emptyStarChar.repeat(remaining);
 
     return (
-      <Text style={{ color: "#faad14", fontSize: "16px" }}>
+      <span className="text-amber-500 text-base">
         {stars}{" "}
-        <Text style={{ color: "#888", fontSize: "14px" }}>
-          ({rating.toFixed(1)})
-        </Text>
-      </Text>
+        <span className="text-gray-500 text-sm">({rating.toFixed(1)})</span>
+      </span>
     );
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
+  const getStatusBadge = (status: StartupStatus) => {
+    const statusConfig = {
+      pending: { color: "bg-amber-100 text-amber-800", label: "Pending" },
+      approved: { color: "bg-green-100 text-green-800", label: "Approved" },
+      rejected: { color: "bg-red-100 text-red-800", label: "Rejected" },
+    };
+
+    const config = statusConfig[status];
+
+    return (
+      <Badge className={`${config.color} px-3 py-1 rounded-full`}>
+        {config.label}
+      </Badge>
+    );
   };
-
-  const getRandomColor = (name: string) => {
-    const colors = [
-      "#1890ff",
-      "#52c41a",
-      "#faad14",
-      "#f5222d",
-      "#722ed1",
-      "#13c2c2",
-      "#eb2f96",
-      "#fadb14",
-    ];
-
-    const nameSum = name
-      .split("")
-      .reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    return colors[nameSum % colors.length];
-  };
-
-  const columns: ColumnType<TableStartupData>[] = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      ...getColumnSearchProps("name"),
-      sorter: (a, b) => (a.name || "").localeCompare(b.name || ""),
-      render: (name: string) => (
-        <Space>
-          <Avatar
-            style={{
-              backgroundColor: getRandomColor(name),
-              verticalAlign: "middle",
-            }}
-          >
-            {getInitials(name)}
-          </Avatar>
-          <Text strong>{name}</Text>
-        </Space>
-      ),
-    },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-      ...getColumnSearchProps("category"),
-      sorter: (a, b) => a.category.localeCompare(b.category),
-      render: (category: string) => (
-        <Tag color="blue" style={{ padding: "4px 8px", borderRadius: "16px" }}>
-          {category}
-        </Tag>
-      ),
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (description: string) => (
-        <Tooltip placement="topLeft" title={description}>
-          {description.length > 50
-            ? `${description.substring(0, 50)}...`
-            : description}
-        </Tooltip>
-      ),
-    },
-    {
-      title: "Location",
-      dataIndex: "location",
-      key: "location",
-      ...getColumnSearchProps("location"),
-      sorter: (a, b) => a.location.localeCompare(b.location),
-      render: (location: string) => (
-        <Space>
-          <span style={{ fontSize: "16px" }}>📍</span>
-          {location}
-        </Space>
-      ),
-    },
-    {
-      title: "Rating",
-      dataIndex: "rating",
-      key: "rating",
-      sorter: (a, b) => a.rating - b.rating,
-      render: (rating: number) => getRatingStars(rating),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      ...getColumnSearchProps("email"),
-      render: (email: string) => (
-        <a href={`mailto:${email}`} style={{ color: "#1890ff" }}>
-          {email}
-        </a>
-      ),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      filters: [
-        { text: "Pending", value: "pending" },
-        { text: "Approved", value: "approved" },
-        { text: "Rejected", value: "rejected" },
-      ],
-      onFilter: (value: boolean | React.Key, record: TableStartupData) =>
-        record.status === (value as StartupStatus),
-      render: (status: StartupStatus) => {
-        const statusColors = {
-          pending: "#faad14",
-          approved: "#52c41a",
-          rejected: "#f5222d",
-        };
-
-        return (
-          <Badge
-            color={statusColors[status]}
-            text={
-              <Text strong>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </Text>
-            }
-          />
-        );
-      },
-    },
-    type === "pending"
-      ? {
-          title: "Actions",
-          key: "actions",
-          render: (_, record: TableStartupData) => (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button type="text" icon={<MoreOutlined />} />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => handleView(record)}>
-                  <EyeOutlined />
-                  View Details
-                </DropdownMenuItem>
-                {record.status === "pending" && (
-                  <>
-                    <DropdownMenuItem onClick={() => handleApprove(record)}>
-                      <CheckCircleOutlined />
-                      Approve
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleReject(record)}>
-                      <CloseCircleOutlined />
-                      Reject
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ),
-        }
-      : {
-          title: "Actions",
-          key: "actions",
-          render: (_, record: TableStartupData) => (
-            <Space size="middle">
-              <Button
-                type="primary"
-                icon={<EyeOutlined />}
-                onClick={() => handleView(record)}
-              >
-                View
-              </Button>
-            </Space>
-          ),
-        },
-  ];
-
-  const tableData: TableStartupData[] = validData.map((item) => ({
-    key: item.id,
-    name: item.name || "N/A",
-    category: item.categoryName || "N/A",
-    description: item.description || "N/A",
-    location: item.location || "N/A",
-    rating: item.rating || 0,
-    email: item.email || "N/A",
-    status: item.status as StartupStatus,
-  }));
-
-  const EmptyState: FC<EmptyStateProps> = ({ text }) => (
-    <div className="flex flex-col items-center justify-center py-12">
-      <div className="text-gray-400 text-xl mb-4">
-        <span className="text-3xl">📊</span>
-      </div>
-      <div className="text-gray-500 text-xl mb-2 font-semibold">
-        No data available
-      </div>
-      <p className="text-gray-400">{text}</p>
-    </div>
-  );
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#1890ff",
-          borderRadius: 8,
-        },
-        components: {
-          Table: {
-            headerBg: "#f5f5f5",
-            headerColor: "#262626",
-            borderRadius: 8,
-            rowHoverBg: "#f0f8ff",
-          },
-          Card: {
-            boxShadow: "0 6px 16px -8px rgba(0, 0, 0, 0.08)",
-          },
-        },
-      }}
+    <div
+      className="max-w-6xl mx-auto rounded-xl shadow-md border border-gray-200 overflow-hidden"
+      ref={tableRef}
     >
-      <Card
-        id="startup-table"
-        ref={tableRef}
-        style={{ borderRadius: "12px" }}
-        className="shadow-md"
-        title={
-          <div className="flex items-center justify-between">
-            <Title level={4} style={{ margin: 0 }}>
-              {type === "pending" ? "Pending Startups" : "All Startups"}
-            </Title>
-          </div>
-        }
-      >
-        <Table<TableStartupData>
-          columns={columns}
-          dataSource={tableData}
-          scroll={{ x: "100%" }}
-          pagination={{
-            pageSize: 5,
-            current: currentPage,
-            onChange: (page) => setCurrentPage(page),
-            showSizeChanger: true,
-            pageSizeOptions: ["5", "10", "20"],
-          }}
-          locale={{
-            emptyText: (
-              <EmptyState
-                text={"No startup data available. Please add some startups."}
+      <div className="bg-white p-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">
+            {type === "pending"
+              ? "Pending Startups"
+              : type === "approved"
+              ? "Approved Startups"
+              : type === "rejected"
+              ? "Rejected Startups"
+              : "All Startups"}
+          </h2>
+          <div className="w-full md:w-auto flex items-center gap-2">
+            <select
+              className="bg-white border border-gray-300 rounded-lg text-gray-700 px-3 py-2"
+              onChange={(e) => setSearchColumn(e.target.value)}
+              value={searchColumn}
+            >
+              <option value="name">Name</option>
+              <option value="categoryName">Category</option>
+              <option value="location">Location</option>
+              <option value="email">Email</option>
+            </select>
+            <div className="relative flex-1 md:w-64">
+              <SearchIcon className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder={`Search by ${searchColumn}...`}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="pl-9 bg-white border-gray-300 text-gray-700 w-full"
               />
-            ),
-          }}
-          rowClassName={(record) =>
-            record.status === "approved"
-              ? "bg-green-50"
-              : record.status === "rejected"
-              ? "bg-red-50"
-              : ""
-          }
-        />
-      </Card>
-    </ConfigProvider>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-gray-50">
+              <TableRow>
+                <TableHead className="text-gray-700">Name</TableHead>
+                <TableHead className="text-gray-700">Category</TableHead>
+                <TableHead className="text-gray-700">Description</TableHead>
+                <TableHead className="text-gray-700">Location</TableHead>
+                <TableHead className="text-gray-700">Rating</TableHead>
+                <TableHead className="text-gray-700">Email</TableHead>
+                <TableHead className="text-gray-700">Status</TableHead>
+                <TableHead className="text-gray-700">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.length > 0 ? (
+                paginatedData.map((startup) => (
+                  <TableRow
+                    key={startup.id}
+                    className={
+                      startup.status === "approved"
+                        ? "bg-green-50 hover:bg-green-100"
+                        : startup.status === "rejected"
+                        ? "bg-red-50 hover:bg-red-100"
+                        : "hover:bg-gray-50"
+                    }
+                  >
+                    <TableCell className="text-gray-800 font-medium">
+                      <div className="flex items-center space-x-3">
+                        <span>{startup.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs">
+                        {startup.categoryName}
+                      </span>
+                    </TableCell>
+                    <TableCell className="max-w-xs text-gray-700">
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span className="block truncate w-40">
+                            {startup.description}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-lg bg-white text-gray-800">
+                          {startup.description}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell className="text-gray-700">
+                      <div className="flex items-center space-x-1">
+                        <span className="text-base">📍</span>
+                        <span>{startup.location}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{getRatingStars(startup.rating)}</TableCell>
+                    <TableCell>
+                      <a
+                        href={`mailto:${startup.email}`}
+                        className="text-indigo-600 hover:text-indigo-800"
+                      >
+                        {startup.email}
+                      </a>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(startup.status)}</TableCell>
+                    <TableCell>
+                      {type === "pending" ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-gray-500 hover:text-gray-800"
+                            >
+                              <MoreHorizontalIcon className="h-5 w-5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="bg-white text-gray-800 border-gray-200">
+                            <DropdownMenuItem className="focus:bg-gray-100">
+                              <Link
+                                href={`/startup/${startup.id}`}
+                                className="flex items-center"
+                              >
+                                <EyeIcon className="mr-2 h-4 w-4" />
+                                View Details
+                              </Link>
+                            </DropdownMenuItem>
+                            {startup.status === "pending" && (
+                              <>
+                                <DropdownMenuItem
+                                  className="focus:bg-gray-100"
+                                  onClick={() => handleApprove(startup)}
+                                >
+                                  <CheckIcon className="mr-2 h-4 w-4 text-green-500" />
+                                  Approve
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="focus:bg-gray-100"
+                                  onClick={() => handleReject(startup)}
+                                >
+                                  <XIcon className="mr-2 h-4 w-4 text-red-500" />
+                                  Reject
+                                </DropdownMenuItem>
+                              </>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                          asChild
+                        >
+                          <Link href={`/startup/${startup.id}`}>
+                            <EyeIcon className="mr-2 h-4 w-4" />
+                            View
+                          </Link>
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-48 text-center">
+                    <div className="flex flex-col items-center justify-center py-12">
+                      <div className="text-gray-400 text-3xl mb-4">📊</div>
+                      <div className="text-gray-700 text-xl mb-2 font-semibold">
+                        No data available
+                      </div>
+                      <p className="text-gray-500">
+                        No startup data found. Please add some startups or
+                        adjust your search.
+                      </p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Pagination */}
+        {totalPages > 0 && (
+          <div className="flex justify-between items-center mt-4 text-gray-700">
+            <div>
+              Showing {startIndex + 1} to{" "}
+              {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
+              {filteredData.length} entries
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                Previous
+              </Button>
+              {Array.from({ length: totalPages }).map((_, index) => (
+                <Button
+                  key={index}
+                  variant={currentPage === index + 1 ? "default" : "outline"}
+                  size="sm"
+                  className={
+                    currentPage === index + 1
+                      ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-100"
+                  }
+                  onClick={() => setCurrentPage(index + 1)}
+                >
+                  {index + 1}
+                </Button>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-gray-300 text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
