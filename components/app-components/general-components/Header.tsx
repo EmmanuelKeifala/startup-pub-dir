@@ -44,7 +44,6 @@ function Header() {
   const navItems = [
     { href: "/startUps", label: "StartUps" },
     { href: "/about", label: "About" },
-    { href: "/contact", label: "Contact" },
     {
       href: "/register",
       label: session?.user?.role === "startup_owner" && "Register",
