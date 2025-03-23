@@ -102,7 +102,6 @@ function StartUpOverview(startUp: Startup) {
         >
           <div className="relative w-full max-w-xs mx-auto">
             <StartUpCover
-              variant="medium"
               className="z-10 shadow-2xl w-full"
               accentColor={color as string}
               coverImage={logo as string}
@@ -118,7 +117,6 @@ function StartUpOverview(startUp: Startup) {
               }}
             >
               <StartUpCover
-                variant="medium"
                 accentColor={color as string}
                 coverImage={logo as string}
               />
