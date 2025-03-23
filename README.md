@@ -105,14 +105,14 @@ This platform serves as a centralized directory for startups, providing valuable
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-organization/startup-directory.git
-   cd startup-directory
+   git clone https://github.com/https://github.com/EmmanuelKeifala/startup-pub-dir.git
+   cd startup-pub-dir
    ```
 
 2. **Install dependencies**
 
    ```bash
-   pnpm install
+   npm install
    ```
 
 3. **Configure environment variables**
@@ -135,12 +135,15 @@ This platform serves as a centralized directory for startups, providing valuable
 4. **Initialize the database schema**
 
    ```bash
-   pnpm db:migrate
+   npm drizzle-kit generate
+   ```
+   ```bash
+   npm drizzle-kit migrate
    ```
 
 5. **Run the development server**
    ```bash
-   pnpm dev
+   npm run dev
    ```
    The application will be available at `http://localhost:3000`
 
