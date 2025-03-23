@@ -3,6 +3,7 @@ import {
   StartUpOverview,
   StartUpList,
 } from "@/components/app-components/index";
+import { Startup } from "@/types/general";
 import Link from "next/link";
 
 export default async function Home() {
@@ -14,11 +15,11 @@ export default async function Home() {
     <div className="max-w-6xl mx-auto px-4 py-10 gap-4">
       {hasStartups ? (
         <>
-          <StartUpOverview {...startupsFromDB[0]} />
+          <StartUpOverview {...(startupsFromDB[0] as Startup)} />
 
           <StartUpList
             title="New StartUps"
-            startups={startupsFromDB}
+            startups={startupsFromDB as Startup[]}
             containerClassName="mt-28"
           />
         </>

@@ -17,24 +17,7 @@ import { Label } from "@/components/ui/label";
 import { searchStartupsAction } from "@/actions/search";
 import db from "@/database/drizzle";
 import { startups } from "@/database/schema";
-
-// Define types for our data and props
-interface Startup {
-  id: string;
-  name: string;
-  description: string;
-  location: string;
-  website: string | null;
-  email: string | null;
-  phone: string | null;
-  logo: string | null;
-  video: string | null;
-  companyColors: string | null;
-  status: "pending" | "approved" | "rejected";
-  rating: number | null;
-  categoryId: string | null;
-  categoryName: string | null;
-}
+import { Startup } from "@/types/general";
 
 interface Category {
   id: string;
@@ -102,7 +85,7 @@ const SearchStartups = ({ defaultValues }: Props) => {
                 }),
             };
             const data = await searchStartupsAction(params.query, filters);
-            setResults(data);
+            setResults(data as Startup[]);
           } catch (error) {
             console.error("Error searching startups:", error);
           } finally {
