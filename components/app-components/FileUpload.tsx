@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import config from "@/lib/config";
 import { toast } from "sonner";
-import { Upload, Image as ImageIcon, File } from "lucide-react";
+import { Upload, Image as ImageIcon, File, Loader2 } from "lucide-react";
 
 const {
   imagekit: { publicKey, urlEndpoint },
@@ -69,11 +69,13 @@ const FileUpload = ({
     url: value ?? null,
   });
   const [progress, setProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Enhanced styles with better visual feedback
   const styles = {
     button: cn(
-      "flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 transition-all cursor-pointer hover:opacity-80 relative w-full h-full",
+      "flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-4 transition-all relative w-full h-full",
+      isUploading ? "opacity-70" : "hover:opacity-80 cursor-pointer",
       variant === "dark"
         ? "bg-dark-300 border-gray-600 hover:border-gray-400"
         : "bg-light-600 border-gray-300 hover:border-gray-400"
@@ -87,13 +89,21 @@ const FileUpload = ({
       variant === "dark" ? "text-light-100/70" : "text-dark-400"
     ),
     icon: cn("mb-1", variant === "dark" ? "text-light-100" : "text-slate-500"),
-    progressBar:
-      "rounded-full bg-green-800 p-0.5 text-center font-bebas-neue text-[8px] font-bold leading-none text-light-100;",
+    progressBar: cn(
+      "h-full rounded-full transition-all",
+      variant === "dark" ? "bg-green-600" : "bg-green-500"
+    ),
     progressContainer: "w-full h-2 rounded-full bg-gray-200 mt-3",
+    progressText: cn(
+      "text-xs mt-1",
+      variant === "dark" ? "text-light-100/70" : "text-dark-400"
+    ),
   };
 
   const onError = (error: UploadError) => {
     console.error(error);
+    setIsUploading(false);
+    setProgress(0);
     toast.error(`${type} upload failed`, {
       description: `Your ${type} could not be uploaded. Please try again. ${error.message}`,
     });
@@ -102,6 +112,12 @@ const FileUpload = ({
   const onSuccess = (res: FileUploadResponse) => {
     setFile(res);
     onFileChange(res.url);
+    setIsUploading(false);
+    setProgress(100);
+
+    setTimeout(() => {
+      setProgress(0);
+    }, 1500);
 
     toast.success(`${type} uploaded successfully`, {
       description: `File uploaded successfully!`,
@@ -126,6 +142,18 @@ const FileUpload = ({
     return parts[parts.length - 1];
   };
 
+  const handleUploadStart = () => {
+    setIsUploading(true);
+    setProgress(0);
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!isUploading && ikUploadRef.current) {
+      ikUploadRef.current.click();
+    }
+  };
+
   return (
     <ImageKitProvider
       publicKey={publicKey}
@@ -138,7 +166,7 @@ const FileUpload = ({
         onSuccess={onSuccess}
         useUniqueFileName={true}
         validateFile={onValidate}
-        onUploadStart={() => setProgress(0)}
+        onUploadStart={handleUploadStart}
         onUploadProgress={({ loaded, total }) => {
           const percent = Math.round((loaded / total) * 100);
           setProgress(percent);
@@ -151,12 +179,16 @@ const FileUpload = ({
       <div className="w-full h-full flex flex-col">
         <button
           className={styles.button}
-          onClick={(e) => {
-            e.preventDefault();
-            ikUploadRef.current?.click();
-          }}
+          onClick={handleClick}
+          disabled={isUploading}
         >
-          {!file?.filePath ? (
+          {isUploading ? (
+            <>
+              <Loader2 size={24} className={`${styles.icon} animate-spin`} />
+              <p className={styles.placeholder}>Uploading...</p>
+              <p className={styles.progressText}>{progress}% complete</p>
+            </>
+          ) : !file?.filePath ? (
             <>
               {type === "image" ? (
                 <ImageIcon size={24} className={styles.icon} />
@@ -165,8 +197,7 @@ const FileUpload = ({
               )}
               <p className={styles.placeholder}>{placeholder}</p>
               <p className="text-xs opacity-70">
-                Click to select a {type === "image" ? "an image" : "a video"}{" "}
-                file
+                Click to select {type === "image" ? "an image" : "a video"} file
               </p>
             </>
           ) : (
@@ -183,8 +214,8 @@ const FileUpload = ({
             </>
           )}
 
-          {/* Progress bar */}
-          {progress > 0 && progress < 100 && (
+          {/* Progress bar - always show during upload */}
+          {isUploading && (
             <div className={styles.progressContainer}>
               <div
                 className={styles.progressBar}
@@ -194,7 +225,7 @@ const FileUpload = ({
           )}
         </button>
 
-        {file?.filePath && (
+        {file?.filePath && !isUploading && (
           <div className="mt-4 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
             {type === "image" ? (
               <IKImage
