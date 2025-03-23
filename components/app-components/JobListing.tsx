@@ -19,6 +19,7 @@ import {
   DollarSignIcon,
   Search,
 } from "lucide-react";
+import Image from "next/image";
 
 // Define the Job type based on the database schema
 export interface Job {
@@ -47,17 +48,16 @@ interface JobListingsProps {
 }
 
 function JobListings({ initialJobs, jobTypes, locations }: JobListingsProps) {
-  const [jobs, _setJobs] = useState<Job[]>(initialJobs);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState<string>("all");
   const [selectedLocation, setSelectedLocation] = useState<string>("all");
 
-  if (jobs.length === 0) {
+  if (initialJobs.length === 0) {
     return;
   }
 
   // Filter jobs based on search query and filters
-  const filteredJobs = jobs.filter((job) => {
+  const filteredJobs = initialJobs.filter((job) => {
     const matchesSearch =
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -205,7 +205,7 @@ function JobListings({ initialJobs, jobTypes, locations }: JobListingsProps) {
                         {/* Logo Column */}
                         <div className="w-16 h-16 flex-shrink-0 bg-white/10 rounded-lg overflow-hidden flex items-center justify-center">
                           {job.startup?.logo ? (
-                            <img
+                            <Image
                               src={job.startup.logo}
                               alt={job.startup?.name || "Company logo"}
                               className="object-contain"
@@ -294,7 +294,7 @@ function JobListings({ initialJobs, jobTypes, locations }: JobListingsProps) {
                   No jobs found
                 </h3>
                 <p className="mt-2 text-gray-400 max-w-md mx-auto">
-                  We couldn't find any jobs found for this startup
+                  We couldn&lsquo;t find any jobs found for this startup
                 </p>
                 <Button
                   className="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white"

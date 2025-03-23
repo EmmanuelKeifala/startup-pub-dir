@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StartupForm from "@/components/app-components/StartUpForm";
 import { getUserStartUp } from "@/actions/helper-actions";
 import { useSession } from "next-auth/react";
+import { z } from "zod";
+import { registerStartUpSchema } from "@/lib/validations";
 
 // Define types for the startup data
 interface Startup {
@@ -96,7 +98,7 @@ function MyStartUp() {
     };
 
     fetchData();
-  }, []);
+  }, [session?.user.id]);
 
   // Transform API data to match form structure
   const prepareFormData = (data: Startup | null): FormData => {
@@ -197,6 +199,8 @@ function MyStartUp() {
     );
   }
 
+  type StartupFormValues = z.infer<typeof registerStartUpSchema>;
+
   return (
     <div className="container">
       <div className="flex items-center gap-4">
@@ -214,7 +218,12 @@ function MyStartUp() {
       <StartupForm
         type="update"
         categories={categories}
-        onSubmit={handleSubmit}
+        onSubmit={async (data: StartupFormValues) => {
+          const result = await handleSubmit(data);
+          return (
+            result || { success: false, error: "An unknown error occurred" }
+          );
+        }}
         defaultValues={prepareFormData(startupData)}
         // isEditing={true}
       />
