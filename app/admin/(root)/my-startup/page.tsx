@@ -11,7 +11,6 @@ import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { registerStartUpSchema } from "@/lib/validations";
 
-// Define types for the startup data
 interface Startup {
   id: string;
   name: string;
@@ -19,12 +18,12 @@ interface Startup {
   description: string;
   location: string;
   website: string;
-  phone: string;
-  email: string;
-  social: string;
-  logo: string;
-  video: string;
-  companyColors: string;
+  phone?: string;
+  email?: string;
+  social?: string;
+  logo?: string;
+  video?: string;
+  companyColors?: string;
 }
 
 interface Category {
@@ -39,13 +38,13 @@ interface FormData {
   location: string;
   website: string;
   contact: {
-    phone: string;
-    email: string;
-    social: string;
+    phone?: string;
+    email?: string;
+    social?: string;
   };
-  logo: string;
-  video: string;
-  companyColors: string;
+  logo?: string;
+  video?: string;
+  companyColors?: string;
 }
 
 function MyStartUp() {
@@ -56,7 +55,6 @@ function MyStartUp() {
   const [startupId, setStartUpId] = useState<string>("");
   const { data: session } = useSession();
 
-  // Fetch the startup data and categories when the component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -211,21 +209,17 @@ function MyStartUp() {
             router.back();
           }}
         />
-        <span className="text-3xl font-bold text-white mb-8">
-          Edit Startup Profile
-        </span>
       </div>
       <StartupForm
         type="update"
         categories={categories}
         onSubmit={async (data: StartupFormValues) => {
-          const result = await handleSubmit(data);
+          const result = await handleSubmit(data as StartupFormValues);
           return (
             result || { success: false, error: "An unknown error occurred" }
           );
         }}
         defaultValues={prepareFormData(startupData)}
-        // isEditing={true}
       />
     </div>
   );

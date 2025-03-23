@@ -74,13 +74,6 @@ function StartupForm({
     defaultValues,
   });
 
-  // Get accent color based on type
-  const accentColor = "#6366F1"; // Indigo color from AboutUs
-  const gradientStyle = {
-    background: `linear-gradient(135deg, ${accentColor}22 0%, #12141d 50%, #12151f 100%)`,
-    borderLeft: `3px solid ${accentColor}`,
-  };
-
   const handleSubmit = async (data: StartupFormValues) => {
     try {
       setIsLoading(true);
@@ -128,12 +121,9 @@ function StartupForm({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card
-        className="w-full text-white shadow-xl overflow-hidden backdrop-blur-sm"
-        style={type === "create" ? gradientStyle : {}}
-      >
-        <CardHeader className="border-b border-white/10 pb-6">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+      <Card className="w-full shadow-xl overflow-hidden bg-white">
+        <CardHeader className="border-b border-gray-200 pb-6">
+          <CardTitle className="text-3xl font-bold text-gray-900">
             {type === "create"
               ? "Add Your Startup to Our Directory"
               : "Update Your Startup Profile"}
@@ -151,7 +141,7 @@ function StartupForm({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
               >
-                <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-bold mb-6 text-gray-900">
                   Basic Information
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -160,13 +150,13 @@ function StartupForm({
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.name}
                         </FormLabel>
                         <FormControl>
                           <Input
                             required
-                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            className="bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900"
                             placeholder="Your startup name"
                             {...field}
                           />
@@ -180,17 +170,17 @@ function StartupForm({
                     name="categoryId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.categoryId}
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
-                          <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectTrigger className="bg-gray-50 border-gray-300 text-gray-900">
                             <SelectValue placeholder="Select Category" />
                           </SelectTrigger>
-                          <SelectContent className="bg-[#12141d] border-white/10 text-white">
+                          <SelectContent className="bg-white border-gray-300 text-gray-900">
                             {categories.map((category) => (
                               <SelectItem key={category.id} value={category.id}>
                                 {category.name}
@@ -207,13 +197,13 @@ function StartupForm({
                     name="location"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.location}
                         </FormLabel>
                         <FormControl>
                           <Input
                             required
-                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            className="bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900"
                             placeholder="City, Country"
                             {...field}
                           />
@@ -227,13 +217,13 @@ function StartupForm({
                     name="website"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.website}
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="url"
-                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            className="bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900"
                             placeholder="https://example.com"
                             {...field}
                           />
@@ -249,13 +239,13 @@ function StartupForm({
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.description}
                         </FormLabel>
                         <FormControl>
                           <Textarea
                             required
-                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white min-h-32"
+                            className="bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900 min-h-32"
                             placeholder="Describe your startup's mission, vision, and unique value proposition..."
                             {...field}
                           />
@@ -272,7 +262,7 @@ function StartupForm({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.2 }}
               >
-                <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-bold mb-6 text-gray-900">
                   Contact Information
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -281,13 +271,13 @@ function StartupForm({
                     name="contact.email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES["contact.email"]}
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="email"
-                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            className="bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900"
                             placeholder="contact@yourstartup.com"
                             {...field}
                           />
@@ -301,12 +291,12 @@ function StartupForm({
                     name="contact.phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES["contact.phone"]}
                         </FormLabel>
                         <FormControl>
                           <Input
-                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            className="bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900"
                             placeholder="+232 555-123-4567"
                             {...field}
                           />
@@ -320,17 +310,17 @@ function StartupForm({
                     name="contact.social"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES["contact.social"]}
                         </FormLabel>
                         <FormControl>
                           <Input
-                            className="bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                            className="bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900"
                             placeholder="https://twitter.com/yourstartup"
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription className="text-gray-400 text-xs">
+                        <FormDescription className="text-gray-500 text-xs">
                           Link to your primary social media profile
                         </FormDescription>
                       </FormItem>
@@ -345,7 +335,7 @@ function StartupForm({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.3 }}
               >
-                <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-bold mb-6 text-gray-900">
                   Media & Brand
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -354,22 +344,22 @@ function StartupForm({
                     name="logo"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.logo}
                         </FormLabel>
                         <FormControl>
-                          <div className="h-40 w-full bg-white/5 rounded-xl border border-dashed border-white/20 flex items-center justify-center overflow-hidden">
+                          <div className="h-40 w-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
                             <FileUpload
                               type="image"
                               accept="image/*"
                               placeholder="Upload Logo"
                               folder="logos"
-                              variant="dark"
+                              variant="light"
                               onFileChange={field.onChange}
                             />
                           </div>
                         </FormControl>
-                        <FormDescription className="text-gray-400 text-xs mt-2">
+                        <FormDescription className="text-gray-500 text-xs mt-2">
                           Upload a high-quality logo (PNG or SVG recommended)
                         </FormDescription>
                       </FormItem>
@@ -381,22 +371,22 @@ function StartupForm({
                     name="video"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.video}
                         </FormLabel>
                         <FormControl>
-                          <div className="h-40 w-full bg-white/5 rounded-xl border border-dashed border-white/20 flex items-center justify-center overflow-hidden">
+                          <div className="h-40 w-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
                             <FileUpload
                               type="video"
                               accept="video/*"
                               placeholder="Upload Video"
                               folder="videos"
-                              variant="dark"
+                              variant="light"
                               onFileChange={field.onChange}
                             />
                           </div>
                         </FormControl>
-                        <FormDescription className="text-gray-400 text-xs mt-2">
+                        <FormDescription className="text-gray-500 text-xs mt-2">
                           Share a short video introducing your startup (2
                           minutes max)
                         </FormDescription>
@@ -411,7 +401,7 @@ function StartupForm({
                     name="companyColors"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-300 text-base">
+                        <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.companyColors}
                         </FormLabel>
                         <FormControl>
@@ -419,7 +409,7 @@ function StartupForm({
                             {companyColors.map((color, index) => (
                               <div
                                 key={index}
-                                className="flex items-center gap-3 bg-white/5 p-2 rounded-lg"
+                                className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg"
                               >
                                 <input
                                   type="color"
@@ -435,21 +425,21 @@ function StartupForm({
                                     updateColor(index, e.target.value)
                                   }
                                   placeholder="#RRGGBB"
-                                  className="flex-1 bg-white/5 border-white/10 focus:border-indigo-400 text-white"
+                                  className="flex-1 bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900"
                                 />
                               </div>
                             ))}
                             <Button
                               type="button"
                               onClick={addColorField}
-                              className="mt-2 bg-indigo-600/20 border border-indigo-400/30 hover:bg-indigo-600/30 text-white flex items-center gap-2"
+                              className="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2"
                             >
                               <PlusCircle className="w-4 h-4" />
                               Add Brand Color
                             </Button>
                           </div>
                         </FormControl>
-                        <FormDescription className="text-gray-400 text-xs mt-2">
+                        <FormDescription className="text-gray-500 text-xs mt-2">
                           Select your brand colors to help us personalize your
                           profile
                         </FormDescription>
@@ -465,7 +455,7 @@ function StartupForm({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.4 }}
-                className="flex justify-end mt-10 pt-6 border-t border-white/10"
+                className="flex justify-end mt-10 pt-6 border-t border-gray-200"
               >
                 <Button
                   type="submit"

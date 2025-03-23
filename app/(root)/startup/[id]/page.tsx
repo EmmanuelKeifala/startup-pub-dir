@@ -14,11 +14,11 @@ import { getJobs } from "@/actions/jobs";
 import { Job } from "@/components/app-components/JobListing";
 
 interface StartUpProps {
-  params: { id: string } | Promise<{ id: string }>;
+  params: { id: string };
 }
 
 async function StartUp({ params }: StartUpProps) {
-  const { id } = await params;
+  const { id } = params;
   const session = await auth();
 
   const startUpDetails = await getStartUp({
