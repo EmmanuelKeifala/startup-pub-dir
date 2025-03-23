@@ -135,10 +135,10 @@ This platform serves as a centralized directory for startups, providing valuable
 4. **Initialize the database schema**
 
    ```bash
-   npm drizzle-kit generate
+   npx drizzle-kit generate
    ```
    ```bash
-   npm drizzle-kit migrate
+   npx drizzle-kit migrate
    ```
 
 5. **Run the development server**
