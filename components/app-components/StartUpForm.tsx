@@ -7,6 +7,7 @@ import {
   FormItem,
   FormLabel,
   FormDescription,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,10 +45,8 @@ const FIELD_NAMES = {
   status: "Status",
 };
 
-// Define the type for our form values
 type StartupFormValues = z.infer<typeof registerStartUpSchema>;
 
-// Define the return type for the onSubmit function
 interface SubmitResult {
   success: boolean;
   error?: string;
@@ -67,11 +66,31 @@ function StartupForm({
   type = "create",
 }: StartupFormProps) {
   const router = useRouter();
-  const [companyColors, setCompanyColors] = useState<string[]>([""]);
+  const [companyColors, setCompanyColors] = useState<string[]>(
+    defaultValues?.companyColors
+      ? defaultValues.companyColors.split(", ")
+      : [""]
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const form = useForm<StartupFormValues>({
     resolver: zodResolver(registerStartUpSchema),
-    defaultValues,
+    defaultValues: {
+      name: "",
+      categoryId: "",
+      description: "",
+      location: "",
+      website: "",
+      contact: {
+        email: "",
+        phone: "",
+        social: "",
+      },
+      logo: "",
+      video: "",
+      companyColors: "",
+      ...defaultValues,
+    },
   });
 
   const handleSubmit = async (data: StartupFormValues) => {
@@ -101,7 +120,6 @@ function StartupForm({
     }
   };
 
-  // Handle company colors
   const addColorField = () => {
     setCompanyColors([...companyColors, ""]);
   };
@@ -110,8 +128,6 @@ function StartupForm({
     const updatedColors = [...companyColors];
     updatedColors[index] = value;
     setCompanyColors(updatedColors);
-
-    // Update the form value with comma-separated colors
     form.setValue("companyColors", updatedColors.filter(Boolean).join(", "));
   };
 
@@ -161,6 +177,7 @@ function StartupForm({
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -175,7 +192,7 @@ function StartupForm({
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          defaultValue={field.value || ""}
                         >
                           <SelectTrigger className="bg-gray-50 border-gray-300 text-gray-900">
                             <SelectValue placeholder="Select Category" />
@@ -208,6 +225,7 @@ function StartupForm({
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -228,6 +246,7 @@ function StartupForm({
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -250,6 +269,7 @@ function StartupForm({
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -282,6 +302,7 @@ function StartupForm({
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -297,10 +318,11 @@ function StartupForm({
                         <FormControl>
                           <Input
                             className="bg-gray-50 border-gray-300 focus:border-indigo-500 text-gray-900"
-                            placeholder="+232 555-123-4567"
+                            placeholder="+23274400001"
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -323,6 +345,7 @@ function StartupForm({
                         <FormDescription className="text-gray-500 text-xs">
                           Link to your primary social media profile
                         </FormDescription>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -356,12 +379,14 @@ function StartupForm({
                               folder="logos"
                               variant="light"
                               onFileChange={field.onChange}
+                              value={field.value}
                             />
                           </div>
                         </FormControl>
                         <FormDescription className="text-gray-500 text-xs mt-2">
                           Upload a high-quality logo (PNG or SVG recommended)
                         </FormDescription>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -383,6 +408,7 @@ function StartupForm({
                               folder="videos"
                               variant="light"
                               onFileChange={field.onChange}
+                              value={field.value}
                             />
                           </div>
                         </FormControl>
@@ -390,6 +416,7 @@ function StartupForm({
                           Share a short video introducing your startup (2
                           minutes max)
                         </FormDescription>
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
@@ -443,8 +470,7 @@ function StartupForm({
                           Select your brand colors to help us personalize your
                           profile
                         </FormDescription>
-                        {/* Hidden input that holds the comma-separated color values */}
-                        <input type="hidden" {...field} />
+                        <FormMessage className="text-black" />
                       </FormItem>
                     )}
                   />
