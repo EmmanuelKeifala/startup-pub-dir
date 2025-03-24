@@ -58,23 +58,6 @@ function ReviewItem({
     }
   }, [id]);
 
-  const handleLike = () => {
-    if (!liked) {
-      setLikeCount(likeCount + 1);
-      setLiked(true);
-      // TODO: Add API call to update likes
-    } else {
-      setLikeCount(likeCount - 1);
-      setLiked(false);
-      // TODO: Add API call to update likes
-    }
-  };
-
-  const handleReport = () => {
-    toast("Report functionality coming soon");
-    // TODO: Implement report functionality
-  };
-
   const handleReplyAdded = () => {
     setShowReplyInput(false);
     fetchReplies();
@@ -141,20 +124,6 @@ function ReviewItem({
       </div>
 
       <div className="mt-4 flex items-center justify-between text-sm">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
-            liked
-              ? "text-blue-400 bg-blue-400/10"
-              : "text-slate-300 hover:bg-gray-700/50"
-          }`}
-          onClick={handleLike}
-        >
-          <ThumbsUp size={14} />
-          <span>{likeCount > 0 ? likeCount : ""} Helpful</span>
-        </motion.button>
-
         <div className="flex items-center gap-4">
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -165,18 +134,6 @@ function ReviewItem({
             <Reply size={14} />
             Reply
           </motion.button>
-
-          {!isCurrentUserReview && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-gray-400 hover:text-gray-200 flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gray-700/50 transition-colors"
-              onClick={handleReport}
-            >
-              <Flag size={14} />
-              Report
-            </motion.button>
-          )}
         </div>
       </div>
 

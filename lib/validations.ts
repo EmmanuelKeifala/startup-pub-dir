@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// TODO: when done with core features might add investor mode
 export const signUpSchema = z
   .object({
     fullName: z.string().min(4, { message: "Full name is required" }),
@@ -43,7 +42,6 @@ export const registerStartUpSchema = z.object({
   video: z.string().url().optional(),
   companyColors: z.string().max(50).optional(),
 });
-
 
 export const jobFormSchema = z.object({
   title: z.string().min(1, "Title is required").max(255, "Title is too long"),
