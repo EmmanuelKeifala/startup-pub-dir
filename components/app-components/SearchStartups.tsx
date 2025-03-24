@@ -18,6 +18,7 @@ import { searchStartupsAction } from "@/actions/search";
 import db from "@/database/drizzle";
 import { startups } from "@/database/schema";
 import { Startup } from "@/types/general";
+import { eq } from "drizzle-orm";
 
 interface Category {
   id: string;
@@ -114,8 +115,8 @@ const SearchStartups = ({ defaultValues }: Props) => {
 
         const locationsResult = await db
           .select({ location: startups.location })
-          .from(startups);
-        //   .where(eq(startups.status, "approved")); TODO: later when the admin is ready this will be ready
+          .from(startups)
+          .where(eq(startups.status, "approved"));
 
         const uniqueLocations = Array.from(
           new Set(locationsResult.map((item) => item.location).filter(Boolean))

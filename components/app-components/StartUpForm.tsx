@@ -81,11 +81,11 @@ function StartupForm({
       if (result?.success) {
         if (type === "create") {
           toast.success("Startup has been successfully added");
-          //  TODO: push the user to the startup they have just created
         } else {
-          router.push(`/`);
           toast.success("Startup has been successfully updated");
         }
+        form.reset();
+        router.push(`/`);
         setIsLoading(false);
       } else {
         setIsLoading(false);

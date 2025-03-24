@@ -8,6 +8,20 @@
       "when": 1742684697918,
       "tag": "0000_small_toxin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1742842712676,
+      "tag": "0001_curved_stature",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1742843105118,
+      "tag": "0002_eager_callisto",
+      "breakpoints": true
     }
   ]
 }

@@ -7,6 +7,7 @@ import {
   text,
   pgEnum,
   real,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const STARTUP_STATUS_ENUM = pgEnum("startup_status", [

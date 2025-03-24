@@ -48,6 +48,7 @@ function ReviewItem({
       const response = await fetch(`/api/reviews/${id}/replies`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data.replies);
         setReplies(data.replies || []);
       }
     } catch (error) {

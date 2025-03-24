@@ -70,6 +70,8 @@ const FileUpload = ({
   });
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<UploadError | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Enhanced styles with better visual feedback
   const styles = {
@@ -98,14 +100,29 @@ const FileUpload = ({
       "text-xs mt-1",
       variant === "dark" ? "text-light-100/70" : "text-dark-400"
     ),
+    errorButton: cn(
+      "mt-2 px-3 py-1 text-sm rounded-md",
+      variant === "dark"
+        ? "bg-red-600 hover:bg-red-700 text-white"
+        : "bg-red-100 hover:bg-red-200 text-red-800"
+    ),
   };
 
   const onError = (error: UploadError) => {
     console.error(error);
     setIsUploading(false);
     setProgress(0);
+    setUploadError(error);
     toast.error(`${type} upload failed`, {
       description: `Your ${type} could not be uploaded. Please try again. ${error.message}`,
+      action: {
+        label: "Retry",
+        onClick: () => {
+          if (selectedFile) {
+            handleRetryUpload();
+          }
+        },
+      },
     });
   };
 
@@ -114,6 +131,8 @@ const FileUpload = ({
     onFileChange(res.url);
     setIsUploading(false);
     setProgress(100);
+    setUploadError(null);
+    setSelectedFile(null);
 
     setTimeout(() => {
       setProgress(0);
@@ -125,6 +144,7 @@ const FileUpload = ({
   };
 
   const onValidate = (file: File) => {
+    setSelectedFile(file);
     const sizeLimit = type === "image" ? 20 : 50; // MB
     if (file.size > sizeLimit * 1024 * 1024) {
       toast.error("File size too large", {
@@ -133,6 +153,26 @@ const FileUpload = ({
       return false;
     }
     return true;
+  };
+
+  const handleRetryUpload = () => {
+    if (!selectedFile) return;
+
+    setIsUploading(true);
+    setProgress(0);
+    setUploadError(null);
+
+    // Trigger the upload again
+    if (ikUploadRef.current) {
+      // Create a new DataTransfer object to simulate file selection
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(selectedFile);
+      ikUploadRef.current.files = dataTransfer.files;
+
+      // Trigger the change event to start upload
+      const event = new Event("change", { bubbles: true });
+      ikUploadRef.current.dispatchEvent(event);
+    }
   };
 
   // Get filename from path
@@ -145,6 +185,7 @@ const FileUpload = ({
   const handleUploadStart = () => {
     setIsUploading(true);
     setProgress(0);
+    setUploadError(null);
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -224,6 +265,14 @@ const FileUpload = ({
             </div>
           )}
         </button>
+
+        {uploadError && !isUploading && (
+          <div className="mt-2 text-center">
+            <button onClick={handleRetryUpload} className={styles.errorButton}>
+              Retry Upload
+            </button>
+          </div>
+        )}
 
         {file?.filePath && !isUploading && (
           <div className="mt-4 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
