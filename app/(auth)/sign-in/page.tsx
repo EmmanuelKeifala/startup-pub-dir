@@ -15,7 +15,7 @@ function SignIn() {
       }}
       onSubmit={async (data) => {
         const result = await signInWithCredentials(data);
-        return result || { success: false, error: "An unknown error occurred" };
+        return result || { success: false, error: "Invalid email or password" };
       }}
     />
   );
