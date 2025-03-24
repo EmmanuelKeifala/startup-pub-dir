@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/database/drizzle";
 import { startupViews } from "@/database/schema";
+import { eq } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -11,23 +12,54 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Missing startupId" }, { status: 400 });
   }
 
-  const hasCookie = request.cookies.has(`viewed_${startupId}`);
+  const cookieName = userId
+    ? `viewed_startup_${startupId}_user_${userId}`
+    : `viewed_startup_${startupId}_anonymous`;
 
-  if (hasCookie) {
+  const viewedCookie = request.cookies.get(cookieName);
+
+  if (viewedCookie) {
     return NextResponse.json({ success: true, alreadyViewed: true });
   }
 
   try {
+    if (userId) {
+      const existingView = await db
+        .select()
+        .from(startupViews)
+        .where(eq(startupViews.userId, userId))
+        .limit(1);
+
+      if (existingView.length > 0) {
+        const response = NextResponse.json({
+          success: true,
+          alreadyViewed: true,
+        });
+        response.cookies.set(cookieName, "true", {
+          maxAge: 60 * 60 * 24 * 1,
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          path: "/",
+        });
+        return response;
+      }
+    }
+
     await db.insert(startupViews).values({
       startupId,
       userId: userId || null,
+      viewedAt: new Date(),
     });
 
-    const response = NextResponse.json({ success: true });
+    const response = NextResponse.json({ success: true, newView: true });
 
-    // Set the cookie
-    response.cookies.set(`viewed_${startupId}`, "true", {
-      maxAge: 60 * 60 * 24, // 1 day
+    response.cookies.set(cookieName, "true", {
+      maxAge: 60 * 60 * 24 * 1,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
     });
 
     return response;

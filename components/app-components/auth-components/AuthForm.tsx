@@ -87,6 +87,7 @@ function AuthForm<T extends FieldValues>({
           }`
         );
 
+        router.refresh();
         router.push("/");
       } else {
         toast.error(result.error || "Something went wrong");
