@@ -2,8 +2,6 @@ import {
   Home,
   Building,
   CheckCircle,
-  Settings,
-  Eye,
   Check,
   BriefcaseBusiness,
 } from "lucide-react";
@@ -40,16 +38,6 @@ export const adminSideBarLinks = (isSuperAdmin: boolean) => {
       icon: Check,
       route: "/admin/startups",
       text: "All StartUps",
-    },
-    {
-      icon: Eye,
-      route: "/admin/reviews",
-      text: "Moderate Reviews",
-    },
-    {
-      icon: Settings,
-      route: "/admin/settings",
-      text: "App Settings",
     },
   ];
 
