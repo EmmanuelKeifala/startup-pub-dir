@@ -94,9 +94,11 @@ function AuthForm<T extends FieldValues>({
       }
     } catch (error) {
       console.error("Form submission error:", error);
-      type === "SIGN_IN"
-        ? toast.error("Failed to sign in")
-        : toast.error("Failed to sign up");
+      if (type === "SIGN_IN") {
+        toast.error("Failed to sign in");
+      } else {
+        toast.error("Failed to sign up");
+      }
     }
   };
 

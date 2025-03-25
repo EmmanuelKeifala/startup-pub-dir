@@ -426,7 +426,7 @@ function StartupForm({
                   <FormField
                     control={form.control}
                     name="companyColors"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel className="text-gray-700 text-base">
                           {FIELD_NAMES.companyColors}

@@ -2,17 +2,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { ReplyType, Review } from "./StartUpReview";
 import ReplyItem from "./ReplyItem";
 import ReplyInput from "./ReplyInput";
-import {
-  Flag,
-  Reply,
-  Star,
-  ThumbsUp,
-  ChevronUp,
-  ChevronDown,
-} from "lucide-react";
+import { Reply, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import Image from "next/image";
-import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -27,16 +19,13 @@ function ReviewItem({
   currentUserId,
   companyColors = "",
 }: ReviewItemProps) {
-  const { id, userId, rating, comment, createdAt, image, name } = review;
+  const { id, rating, comment, createdAt, image, name } = review;
   const accentColor = companyColors?.split(",")[0] || "#FFCA28";
-  const [liked, setLiked] = useState<boolean>(false);
-  const [likeCount, setLikeCount] = useState<number>(review.likeCount || 0);
   const [showReplyInput, setShowReplyInput] = useState<boolean>(false);
   const [replies, setReplies] = useState<ReplyType[]>([]);
   const [repliesHidden, setRepliesHidden] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const isCurrentUserReview = userId === currentUserId;
   const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
 
   // Fix the dependency issue by using useCallback
