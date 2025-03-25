@@ -1,5 +1,5 @@
 "use client";
-import { User, Mail, Lock, Camera } from "lucide-react";
+import { User, Mail, Lock, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,15 +17,14 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { profileFormSchema } from "@/lib/validations";
-import FileUpload from "@/components/app-components/FileUpload";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
@@ -40,6 +39,8 @@ function ProfilePage() {
     confirmPassword: "",
   };
 
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -47,17 +48,33 @@ function ProfilePage() {
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      // Handle form submission
-      console.log("Form submitted:", data);
-      toast.success("Profile updated successfully");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
+      setIsLoading(true);
+      const response = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      console.log("result: ", result);
+
+      if (!response.ok) {
+        toast.error(result.error || "Failed to update profile");
+      }
+
+      toast.success(result.message);
+    } catch (error: unknown) {
+      toast.error(error as string);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
+    <div className="min-h-screen  text-white">
       <div className="container mx-auto px-4 py-12 max-w-2xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -66,40 +83,6 @@ function ProfilePage() {
         >
           <Card className="bg-gray-800/50 border-gray-700 backdrop-blur-sm">
             <CardHeader className="text-center">
-              <div className="relative group mx-auto">
-                <Avatar className="w-24 h-24 border-2 border-indigo-500/50">
-                  <AvatarImage src={form.watch("avatar")} />
-                  <AvatarFallback>AJ</AvatarFallback>
-                </Avatar>
-                <FormField
-                  control={form.control}
-                  name="avatar"
-                  render={({ field }) => (
-                    <div className="absolute bottom-0 right-0">
-                      <Button
-                        size="icon"
-                        className="bg-indigo-600 hover:bg-indigo-700 rounded-full p-2 transition-all group-hover:opacity-100 opacity-0"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById("avatar-upload")?.click();
-                        }}
-                      >
-                        <Camera className="h-4 w-4" />
-                        <span className="sr-only">Change avatar</span>
-                      </Button>
-                      <FileUpload
-                        type="image"
-                        accept="image/*"
-                        placeholder="Change avatar"
-                        folder="avatars"
-                        variant="dark"
-                        onFileChange={field.onChange}
-                        value={field.value || ""}
-                      />
-                    </div>
-                  )}
-                />
-              </div>
               <CardTitle className="text-2xl font-bold mt-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 Edit Profile
               </CardTitle>
@@ -237,15 +220,22 @@ function ProfilePage() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="border-gray-600 hover:bg-gray-700"
+                      className="border-gray-600 hover:bg-gray-700 px-8 py-6 rounded-lg font-medium text-base flex items-center gap-2"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-indigo-600 hover:bg-indigo-700"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 rounded-lg font-medium text-base flex items-center gap-2"
                     >
-                      Save Changes
+                      {isLoading ? (
+                        <>
+                          <Loader className="animate-spin h-5 w-5" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>Save Changes</>
+                      )}
                     </Button>
                   </CardFooter>
                 </form>
