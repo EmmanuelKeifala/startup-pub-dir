@@ -31,9 +31,9 @@ const Sidebar = ({ session }: { session: Session }) => {
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
-  const sidebarLink = adminSideBarLinks(
-    session?.user?.role === "admin" || false
-  );
+  if (isMobile) {
+    console.log("isMobile", isMobile);
+  }
 
   const toggleMobile = () => setMobileOpen(!mobileOpen);
 
