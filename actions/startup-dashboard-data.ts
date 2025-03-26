@@ -7,6 +7,7 @@ import {
   startupViews,
 } from "@/database/schema";
 import { eq, desc, count, avg, sql, and, inArray } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 export async function fetchStartupStats(startupId: string) {
   // Get base startup info
@@ -16,6 +17,7 @@ export async function fetchStartupStats(startupId: string) {
     .where(eq(startups.id, startupId));
 
   if (!startup.length) {
+    redirect("/");
     throw new Error("Startup not found");
   }
 
