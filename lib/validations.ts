@@ -85,18 +85,20 @@ export const profileFormSchema = z
     email: z.string().email({
       message: "Please enter a valid email address.",
     }),
-    avatar: z
+    profilePicture: z
       .string()
       .url({
         message: "Please upload a valid image URL.",
       })
-      .optional(),
+      .optional()
+      .or(z.literal("")),
     currentPassword: z
       .string()
       .min(8, {
         message: "Password must be at least 8 characters.",
       })
-      .optional(),
+      .optional()
+      .or(z.literal("")),
     newPassword: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
@@ -116,13 +118,16 @@ export const profileFormSchema = z
       .refine((value) => !/\s/.test(value), {
         message: "Password must not contain spaces",
       })
-      .optional(),
+      .optional()
+      .or(z.literal("")),
     confirmPassword: z
       .string()
       .min(8, {
         message: "Password must be at least 8 characters.",
       })
-      .optional(),
+      .optional()
+      .or(z.literal("")),
+    role: z.enum(["startup_owner", "user"]).optional(),
   })
   .refine(
     (data) => {

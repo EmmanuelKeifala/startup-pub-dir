@@ -257,7 +257,7 @@ export default function JobPostingForm() {
                     <PopoverContent className="w-auto p-0 bg-white border-gray-300">
                       <Calendar
                         mode="single"
-                        selected={field.value}
+                        selected={field.value as Date}
                         onSelect={field.onChange}
                         disabled={(date) => date < new Date()}
                         initialFocus

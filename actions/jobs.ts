@@ -47,6 +47,13 @@ export const addJob = async (formData: z.infer<typeof jobFormSchema>) => {
       salary,
     } = formData;
 
+    if (!expiresAt) {
+      return {
+        success: false,
+        error: "Please select an expiration date",
+      };
+    }
+
     await db.insert(jobs).values({
       contactEmail,
       description,
