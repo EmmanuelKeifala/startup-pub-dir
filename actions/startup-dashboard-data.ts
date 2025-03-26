@@ -1,4 +1,3 @@
-// TODO: document so i myself will not get confuse later
 import db from "@/database/drizzle";
 import {
   startups,
@@ -235,11 +234,7 @@ export async function fetchStartupStats(startupId: string) {
   }
 
   // Placeholder for common keywords - TODO: implement keyword extraction
-  const commonKeywords = [
-    "Fast service",
-    "Good pricing",
-    "Needs better support",
-  ];
+  const commonKeywords = [""];
 
   return {
     stats: {
@@ -463,11 +458,7 @@ export async function fetchAdminDashboardData() {
   });
 
   // Common keywords - TODO: implement keyword extraction
-  const commonKeywords = [
-    "Fast service",
-    "Good pricing",
-    "Needs better support",
-  ];
+  const commonKeywords = [""];
 
   return {
     stats: {
