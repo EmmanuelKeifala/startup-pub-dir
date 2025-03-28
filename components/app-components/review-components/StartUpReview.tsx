@@ -104,7 +104,7 @@ function StartupReviews({
         <div className="space-y-4 overflow-y-auto pr-2" style={{ maxHeight }}>
           {reviews.map((review) => (
             <ReviewItem
-              key={review.id}
+              key={review.id as string}
               review={review}
               currentUserId={currentUserId}
               companyColors={companyColors}

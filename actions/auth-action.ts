@@ -5,7 +5,6 @@ import { users } from "@/database/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { signIn } from "@/auth";
-import { revalidatePath } from "next/cache";
 
 type AuthCredentials = {
   email: string;
@@ -30,11 +29,10 @@ export const signInWithCredentials = async (
       return { success: false, error: result.error };
     }
 
-    revalidatePath("/");
-
     return { success: true };
   } catch (error) {
     console.log("[SIGN_IN_ERROR]: ", error);
+    return { success: false, error: "An error occurred during sign in" };
   }
 };
 
@@ -61,11 +59,18 @@ export const signUp = async (params: AuthCredentials) => {
       role,
     });
 
-    await signInWithCredentials({ email, password });
-    revalidatePath("/", "layout");
+    const signInResult = await signInWithCredentials({ email, password });
+
+    if (!signInResult?.success) {
+      return {
+        success: false,
+        error: signInResult?.error || "Sign in failed after registration",
+      };
+    }
 
     return { success: true };
   } catch (error) {
     console.log("[SIGN_UP_ERROR]: ", error);
+    return { success: false, error: "An error occurred during sign up" };
   }
 };

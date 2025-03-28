@@ -181,3 +181,29 @@ export const getAllPendingStartups = async () => {
     return [];
   }
 };
+
+export const hasApprovedStartup = async ({
+  params,
+}: {
+  params: { id: string };
+}) => {
+  try {
+    const startup = await db
+      .select({
+        id: startups.id,
+      })
+      .from(startups)
+      .where(
+        and(eq(startups.ownerId, params.id), eq(startups.status, "approved"))
+      )
+      .limit(1);
+
+    if (startup.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("[SERVER_ERROR_CHECKING_USER_STARTUP]: ", error);
+  }
+};

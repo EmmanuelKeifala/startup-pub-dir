@@ -41,13 +41,12 @@ const FIELD_NAMES = {
 };
 
 const FIELD_TYPES = {
-  fullname: "text",
+  fullName: "text",
   email: "email",
   password: "password",
   confirmPassword: "password",
 };
 
-// Define the return type for the onSubmit function
 interface SubmitResult {
   success: boolean;
   error?: string;
@@ -67,7 +66,7 @@ function AuthForm<T extends FieldValues>({
   onSubmit,
 }: Props<T>) {
   const router = useRouter();
-  const form: UseFormReturn<T> = useForm({
+  const form = useForm<T>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
@@ -80,25 +79,21 @@ function AuthForm<T extends FieldValues>({
 
       if (result?.success) {
         toast.success(
-          `${
-            type === "SIGN_IN"
-              ? "You have successfully signed in"
-              : "You have successfully signed up"
-          }`
+          type === "SIGN_IN"
+            ? "You have successfully signed in"
+            : "You have successfully signed up"
         );
 
-        router.refresh();
         router.push("/");
+        router.refresh();
       } else {
-        toast.error(result.error || "Something went wrong");
+        toast.error(result?.error || "Something went wrong");
       }
     } catch (error) {
       console.error("Form submission error:", error);
-      if (type === "SIGN_IN") {
-        toast.error("Failed to sign in");
-      } else {
-        toast.error("Failed to sign up");
-      }
+      toast.error(
+        type === "SIGN_IN" ? "Failed to sign in" : "Failed to sign up"
+      );
     }
   };
 
@@ -109,57 +104,57 @@ function AuthForm<T extends FieldValues>({
       </h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-          {Object.keys(defaultValues).map((field) => (
-            <FormField
-              key={field}
-              control={form.control}
-              name={field as Path<T>}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="capitalize">
-                    {FIELD_NAMES[field.name as keyof typeof FIELD_NAMES]}
-                  </FormLabel>
-                  <FormControl>
-                    {field.name === "profilePicture" ? (
-                      <FileUpload
-                        type="image"
-                        accept="image/*"
-                        placeholder="Upload profile picture"
-                        folder="profilePictures"
-                        variant="dark"
-                        onFileChange={field.onChange}
-                      />
-                    ) : field.name === "role" ? (
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Role" />
-                        </SelectTrigger>
-                        <SelectContent className="form-input">
-                          <SelectItem value="user">User</SelectItem>
-                          <SelectItem value="startup_owner">
-                            Startup Owner
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <Input
-                        required
-                        type={
-                          FIELD_TYPES[field.name as keyof typeof FIELD_TYPES] ||
-                          "text"
-                        }
-                        {...field}
-                        className="form-input"
-                      />
-                    )}
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          ))}
+          {Object.keys(defaultValues).map((field) => {
+            const fieldName = field as keyof typeof FIELD_NAMES;
+            return (
+              <FormField
+                key={field}
+                control={form.control}
+                name={field as Path<T>}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="capitalize">
+                      {FIELD_NAMES[fieldName]}
+                    </FormLabel>
+                    <FormControl>
+                      {fieldName === "profilePicture" ? (
+                        <FileUpload
+                          type="image"
+                          accept="image/*"
+                          placeholder="Upload profile picture"
+                          folder="profilePictures"
+                          variant="dark"
+                          onFileChange={field.onChange}
+                        />
+                      ) : fieldName === "role" ? (
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Role" />
+                          </SelectTrigger>
+                          <SelectContent className="form-input">
+                            <SelectItem value="user">User</SelectItem>
+                            <SelectItem value="startup_owner">
+                              Startup Owner
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Input
+                          required
+                          type={FIELD_TYPES[fieldName] || "text"}
+                          {...field}
+                          className="form-input"
+                        />
+                      )}
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            );
+          })}
 
           <Button type="submit" className="form-btn" disabled={isLoading}>
             {type === "SIGN_UP" ? "Sign Up" : "Sign In"}

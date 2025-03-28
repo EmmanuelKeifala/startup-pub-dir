@@ -8,9 +8,10 @@ import { RocketIcon, LogOut, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
+import { hasApprovedStartup } from "@/actions/helper-actions";
 
 function Header() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const pathName = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -25,10 +26,8 @@ function Header() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
       setScrolled(currentScrollY > 20);
       setVisible(currentScrollY < lastScrollY || currentScrollY < 100);
-
       setLastScrollY(currentScrollY);
     };
 
@@ -36,32 +35,54 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  // Close mobile menu when route changes
+  let isHasRegisteredStartUp = false;
+
   useEffect(() => {
     setMobileMenuOpen(false);
-  }, [pathName]);
+    const checkUser = async () => {
+      const response = await hasApprovedStartup({
+        params: {
+          id: session?.user.id as string,
+        },
+      });
 
-  const navItems = [
-    { href: "/startUps", label: "StartUps" },
-    { href: "/about", label: "About" },
-    {
-      href: "/register",
-      label: session?.user?.role === "startup_owner" && "Register",
-    },
-    {
-      href: "/admin",
-      label:
-        session?.user?.role === "admin"
-          ? "Manage Startups"
-          : session?.user.role === "startup_owner"
-          ? "Manage Startup"
-          : null,
-    },
-    {
-      href: "/sign-in",
-      label: !session?.user?.role && "Sign In",
-    },
-  ].filter((item) => item.label);
+      if (response) {
+        isHasRegisteredStartUp = true;
+      }
+    };
+
+    checkUser();
+  }, [pathName, session?.user.id]);
+
+  const navItems = React.useMemo(() => {
+    const items = [
+      { href: "/startUps", label: "StartUps" },
+      { href: "/about", label: "About" },
+    ];
+
+    if (session?.user?.role === "startup_owner") {
+      items.push({ href: "/register", label: "Register" });
+    }
+
+    if (session?.user?.role === "admin" && isHasRegisteredStartUp) {
+      items.push({ href: "/admin", label: "Manage Startups" });
+    } else if (
+      session?.user?.role === "startup_owner" &&
+      isHasRegisteredStartUp
+    ) {
+      items.push({ href: "/admin", label: "Manage Startup" });
+    }
+
+    if (!session?.user) {
+      items.push({ href: "/sign-in", label: "Sign In" });
+    }
+
+    return items;
+  }, [session]);
+
+  if (status === "loading") {
+    return null;
+  }
 
   return (
     <motion.header
@@ -128,18 +149,20 @@ function Header() {
                   </Link>
                 </motion.li>
               ))}
-              {session && (
+              {session?.user && (
                 <>
                   <motion.div
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Avatar className="border-2 border-blue-500/50 hover:border-blue-500 transition-all duration-300">
-                      <AvatarImage src={`${session?.user.profilePicture}`} />
-                      <AvatarFallback className="bg-gradient-to-br from-blue-600 to-blue-800">
-                        {getInitials(session?.user.fullName as string)}
-                      </AvatarFallback>
-                    </Avatar>
+                    <Link href="/profile">
+                      <Avatar className="border-2 border-blue-500/50 hover:border-blue-500 transition-all duration-300 cursor-pointer">
+                        <AvatarImage src={session.user.profilePicture || ""} />
+                        <AvatarFallback className="bg-gradient-to-br from-blue-600 to-blue-800">
+                          {getInitials(session.user.fullName || "")}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
                   </motion.div>
                   <motion.li
                     whileHover={{ scale: 1.1 }}
@@ -201,7 +224,7 @@ function Header() {
                           </Link>
                         </motion.li>
                       ))}
-                      {session && (
+                      {session?.user && (
                         <>
                           <motion.li
                             initial={{ opacity: 0, x: -20 }}
@@ -209,19 +232,20 @@ function Header() {
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.2, delay: 0.1 }}
                           >
-                            <div className="flex items-center gap-3 text-sm font-medium tracking-wide text-gray-300 py-2 px-4 rounded-md transition-colors duration-200 hover:bg-blue-900/30">
+                            <Link
+                              href="/profile"
+                              className="flex items-center gap-3 text-sm font-medium tracking-wide text-gray-300 py-2 px-4 rounded-md transition-colors duration-200 hover:bg-blue-900/30"
+                            >
                               <Avatar className="h-6 w-6 border border-blue-500/50">
                                 <AvatarImage
-                                  src={`${session?.user.profilePicture}`}
+                                  src={session.user.profilePicture || ""}
                                 />
                                 <AvatarFallback className="text-xs bg-gradient-to-br from-blue-600 to-blue-800">
-                                  {getInitials(
-                                    session?.user.fullName as string
-                                  )}
+                                  {getInitials(session.user.fullName || "")}
                                 </AvatarFallback>
                               </Avatar>
                               <span>Profile</span>
-                            </div>
+                            </Link>
                           </motion.li>
                           <motion.li
                             initial={{ opacity: 0, x: -20 }}

@@ -299,14 +299,16 @@ function StartUpDetails({
                             href={String(url)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded-full text-blue-400 hover:text-blue-300 transition-all text-sm"
+                            className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded-full text-blue-400 hover:text-blue-300 transition-all text-sm truncate"
                           >
                             {platform}
                           </Link>
                         )
                       )
                     ) : (
-                      <span>{String(startUpDetails.social)}</span>
+                      <span className="text-sm tracking-tighter truncate">
+                        {String(startUpDetails.social)}
+                      </span>
                     )}
                   </div>
                 </div>

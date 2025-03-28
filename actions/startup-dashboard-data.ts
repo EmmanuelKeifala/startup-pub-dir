@@ -18,7 +18,6 @@ export async function fetchStartupStats(startupId: string) {
 
   if (!startup.length) {
     redirect("/");
-    throw new Error("Startup not found");
   }
 
   // Get total reviews count

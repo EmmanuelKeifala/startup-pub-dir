@@ -52,9 +52,9 @@ export const registerStartUpSchema = z.object({
   contact: z.object({
     phone: z
       .string()
-      .regex(/^\+232\d{7}$/, {
+      .regex(/^\+232\d{8}$/, {
         message:
-          "Phone must be in the format +232 followed by 7 digits (e.g., +23274400001)",
+          "Phone must be in the format +232 followed by 8 digits (e.g., +23274400001)",
       })
       .optional()
       .or(z.literal("")),

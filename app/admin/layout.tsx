@@ -17,13 +17,18 @@ async function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col lg:ml-64">
-        <header className="sticky top-0 z-10 p-4 bg-white border-b border-gray-200 shadow-sm flex items-center lg:justify-between">
+        {/* Fixed header */}
+        <header className="fixed top-0 left-0 right-0 z-10 p-4 bg-white border-b border-gray-200 shadow-sm flex items-center lg:left-64">
           <div className="lg:hidden">
             <div className="w-10"></div>
           </div>
           <Header session={session} />
         </header>
-        <main className="p-4 md:p-6 flex-1">{children}</main>
+
+        {/* Scrollable content */}
+        <main className="mt-16 p-4 md:p-6 flex-1 overflow-auto">
+          {children}
+        </main>
       </div>
     </div>
   );
