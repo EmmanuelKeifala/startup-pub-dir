@@ -64,7 +64,7 @@ function Header() {
       items.push({ href: "/register", label: "Register" });
     }
 
-    if (session?.user?.role === "admin" && isHasRegisteredStartUp) {
+    if (session?.user?.role === "admin") {
       items.push({ href: "/admin", label: "Manage Startups" });
     } else if (
       session?.user?.role === "startup_owner" &&
