@@ -112,7 +112,7 @@ This platform serves as a centralized directory for startups, providing valuable
 2. **Install dependencies**
 
    ```bash
-   npm install
+   npm install  --force, or --legacy-peer-deps
    ```
 
 3. **Configure environment variables**
