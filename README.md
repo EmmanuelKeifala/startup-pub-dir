@@ -105,7 +105,7 @@ This platform serves as a centralized directory for startups, providing valuable
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/https://github.com/EmmanuelKeifala/startup-pub-dir.git
+   git clone https://github.com/EmmanuelKeifala/startup-pub-dir.git
    cd startup-pub-dir
    ```
 
