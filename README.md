@@ -11,6 +11,9 @@ A comprehensive platform for discovering, connecting with, and evaluating startu
 
 This platform serves as a centralized directory for startups, providing valuable insights, job opportunities, and analytical data. It's designed for three primary user roles: administrators, startup owners, and general users, each with tailored experiences and capabilities.
 
+## A bug that is hunting me.
+ Say you sign in or up and the auth state did not change.. kindly refresh the page.
+ 
 ## Key Features
 
 ### Core Functionality
