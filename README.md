@@ -130,9 +130,9 @@ This platform serves as a centralized directory for startups, providing valuable
    NEXTAUTH_URL="http://localhost:3000"
 
    # ImageKit Configuration
-   IMAGEKIT_PUBLIC_KEY="your-imagekit-public-key"
-   IMAGEKIT_PRIVATE_KEY="your-imagekit-private-key"
-   IMAGEKIT_URL_ENDPOINT="your-imagekit-url-endpoint"
+  NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT=""
+  NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY=""
+  IMAGEKIT_PRIVATE_KEY=""
    ```
 
 4. **Initialize the database schema**
