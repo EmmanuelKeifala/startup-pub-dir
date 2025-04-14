@@ -52,7 +52,20 @@ export const startups = pgTable("startups", {
   logo: text("logo"),
   video: text("video"),
   companyColors: varchar("company_colors", { length: 50 }),
+  openingHours: varchar("opening_hours", { length: 100 }),
   status: STARTUP_STATUS_ENUM("status").notNull().default("pending"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const startupServices = pgTable("startup_services", {
+  id: uuid("id").primaryKey().notNull().defaultRandom().unique(),
+  startupId: uuid("startup_id")
+    .references(() => startups.id, { onDelete: "cascade" })
+    .notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  price: integer("price").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
