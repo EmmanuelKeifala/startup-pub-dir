@@ -50,6 +50,7 @@ type StartupFormValues = z.infer<typeof registerStartUpSchema>;
 interface SubmitResult {
   success: boolean;
   error?: string;
+  startupId?: string;
 }
 
 interface StartupFormProps {
@@ -104,7 +105,7 @@ function StartupForm({
           toast.success("Startup has been successfully updated");
         }
         form.reset();
-        router.push(`/`);
+        router.push(`/register/add-service/${result.startupId}`);
         setIsLoading(false);
       } else {
         setIsLoading(false);

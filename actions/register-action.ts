@@ -47,6 +47,7 @@ export const registerStartUp = async (
       .where(eq(startups.ownerId, userExist[0].id))
       .limit(1);
 
+    // TODO:  will change in production
     // if (startUpExistForUser.length > 0) {
     //   return { success: false, error: "You already have a startup" };
     // }
@@ -70,24 +71,26 @@ export const registerStartUp = async (
     const primaryColor = colorArray[0] || "";
     const secondaryColor = colorArray[1] || colorArray[0] || "";
 
-    // Insert the startup into the database
-    await db.insert(startups).values({
-      name,
-      categoryId: categoryId ? categoryId : null,
-      description,
-      location,
-      website,
-      phone: contact.phone,
-      email: contact.email,
-      social: contact.social,
-      logo,
-      video,
-      companyColors: `${primaryColor},${secondaryColor}`,
-      ownerId: userExist[0].id,
-    });
+    const startupResult = await db
+      .insert(startups)
+      .values({
+        name,
+        categoryId: categoryId ? categoryId : null,
+        description,
+        location,
+        website,
+        phone: contact.phone,
+        email: contact.email,
+        social: contact.social,
+        logo,
+        video,
+        companyColors: `${primaryColor},${secondaryColor}`,
+        ownerId: userExist[0].id,
+      })
+      .returning({ id: startups.id });
 
     revalidatePath("/");
-    return { success: true };
+    return { success: true, startupId: startupResult[0].id };
   } catch (error) {
     console.error("Error registering startup:", error);
     return {

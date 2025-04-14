@@ -1,5 +1,6 @@
 "use server";
 
+import { ServiceFormValues } from "@/components/app-components/ServiceForm";
 import db from "@/database/drizzle";
 import {
   reviews,
@@ -7,6 +8,7 @@ import {
   startups,
   users,
   startupViews,
+  startupServices,
 } from "@/database/schema";
 import { and, eq } from "drizzle-orm";
 
@@ -205,5 +207,43 @@ export const hasApprovedStartup = async ({
     }
   } catch (error) {
     console.log("[SERVER_ERROR_CHECKING_USER_STARTUP]: ", error);
+  }
+};
+
+export const addStartUpService = async ({
+  description,
+  name,
+  price,
+  startupId,
+}: ServiceFormValues): Promise<{
+  success: boolean;
+  error?: any;
+  data?: any;
+}> => {
+  try {
+    console.log(description, name, price, startupId);
+    if (!startupId) {
+      return { success: false, error: "No startup id provided" };
+    }
+
+    const startUpExist = await db
+      .select()
+      .from(startups)
+      .where(eq(startups.id, startupId))
+      .limit(1);
+    if (startUpExist.length < 1) {
+      return { success: false, error: "No startup found" };
+    }
+    const service = await db.insert(startupServices).values({
+      startupId,
+      name,
+      description,
+      price,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.log("[ERROR_ADDING_SERVICE]");
+    return { success: false, error };
   }
 };
