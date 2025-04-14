@@ -8,10 +8,15 @@ import StartUpDetails, {
   StartupDetails,
 } from "@/components/app-components/StartUpDetails";
 import { Session } from "next-auth";
-import { getStartUpReviews, getStartUp } from "@/actions/helper-actions";
+import {
+  getStartUpReviews,
+  getStartUp,
+  getStartUpServices,
+} from "@/actions/helper-actions";
 import { Startup } from "@/types/general";
 import { getJobs } from "@/actions/jobs";
 import { Job } from "@/components/app-components/JobListing";
+import { StartupServices } from "@/components/app-components/StartupServices";
 
 type StartUpProps = Promise<{ id: string }>;
 
@@ -29,6 +34,10 @@ async function StartUp({ params }: { params: StartUpProps }) {
     params: {
       id: startUpDetails?.id as string,
     },
+  });
+
+  const servicesData = await getStartUpServices({
+    startupId: id,
   });
 
   if (!startUpDetails) redirect("/");
@@ -51,6 +60,15 @@ async function StartUp({ params }: { params: StartUpProps }) {
         jobTypes={response?.jobTypes as string[]}
         locations={response?.locations as string[]}
       />
+
+      {servicesData.success && (
+        <StartupServices
+          services={servicesData.data}
+          startupId={id}
+          isOwner={true}
+          accentColor={startUpDetails?.companyColors as string}
+        />
+      )}
     </div>
   );
 }

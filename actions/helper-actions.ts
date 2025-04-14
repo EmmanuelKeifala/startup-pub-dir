@@ -1,6 +1,7 @@
 "use server";
 
 import { ServiceFormValues } from "@/components/app-components/ServiceForm";
+import { Service } from "@/components/app-components/StartupServices";
 import db from "@/database/drizzle";
 import {
   reviews,
@@ -221,7 +222,6 @@ export const addStartUpService = async ({
   data?: any;
 }> => {
   try {
-    console.log(description, name, price, startupId);
     if (!startupId) {
       return { success: false, error: "No startup id provided" };
     }
@@ -245,5 +245,50 @@ export const addStartUpService = async ({
   } catch (error) {
     console.log("[ERROR_ADDING_SERVICE]");
     return { success: false, error };
+  }
+};
+
+export const getStartUpServices = async ({
+  startupId,
+}: {
+  startupId: string;
+}): Promise<{ success: boolean; data: Service[]; error?: string }> => {
+  try {
+    const startupExist = await db
+      .select()
+      .from(startups)
+      .where(eq(startups.id, startupId))
+      .limit(1);
+
+    if (startupExist.length < 1) {
+      return { success: false, error: "No startup found", data: [] };
+    }
+
+    const services = await db
+      .select()
+      .from(startupServices)
+      .where(eq(startupServices.startupId, startupId));
+
+    // Map the query results to Service objects
+    const formattedServices: Service[] = services.map((service) => ({
+      id: service.id,
+      name: service.name,
+      description: service.description,
+      price: service.price,
+      createdAt: service.createdAt,
+      updatedAt: service.updatedAt,
+    }));
+
+    return {
+      success: true,
+      data: formattedServices,
+    };
+  } catch (error) {
+    console.log("[ERROR_GETTING_STARTUP_SERVICES]: ", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      data: [],
+    };
   }
 };
