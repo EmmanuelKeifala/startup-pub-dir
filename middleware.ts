@@ -6,6 +6,7 @@ const PUBLIC_ROUTES = [
   "/startUps",
   "/sign-in",
   "/sign-up",
+  "/about",
   /^\/startup\/[^/]+$/,
 ];
 
