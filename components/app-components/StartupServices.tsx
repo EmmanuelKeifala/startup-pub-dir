@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { DollarSign, Plus, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { DollarSign, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,7 +9,6 @@ export type Service = {
   id: string;
   name: string;
   description: string;
-  price: number;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -92,17 +91,6 @@ export function StartupServices({
                     <h4 className="font-medium text-lg text-white">
                       {service.name}
                     </h4>
-                    <div className="flex items-center mt-1">
-                      <span className="text-yellow-400 font-medium">
-                        $
-                        {service.price === 0
-                          ? "Contact for pricing"
-                          : service.price.toLocaleString()}
-                      </span>
-                      {service.price > 0 && (
-                        <span className="ml-2 text-xs text-gray-400">USD</span>
-                      )}
-                    </div>
                   </div>
                   <Button
                     variant="ghost"

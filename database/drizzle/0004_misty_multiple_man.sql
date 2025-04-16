@@ -1,0 +1,1 @@
+ALTER TABLE "startup_services" DROP COLUMN "price";

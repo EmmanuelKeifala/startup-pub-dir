@@ -65,7 +65,6 @@ export const startupServices = pgTable("startup_services", {
     .notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description").notNull(),
-  price: integer("price").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

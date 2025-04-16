@@ -238,7 +238,6 @@ export const addStartUpService = async ({
       startupId,
       name,
       description,
-      price,
     });
 
     return { success: true };
@@ -274,7 +273,6 @@ export const getStartUpServices = async ({
       id: service.id,
       name: service.name,
       description: service.description,
-      price: service.price,
       createdAt: service.createdAt,
       updatedAt: service.updatedAt,
     }));

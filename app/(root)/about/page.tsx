@@ -64,7 +64,6 @@ function AboutUs() {
           </div>
         </motion.div>
       </section>
-
       {/* Mission Section */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -139,7 +138,6 @@ function AboutUs() {
           </div>
         </div>
       </motion.section>
-
       {/* How It Works Section */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -216,6 +214,193 @@ function AboutUs() {
         </div>
       </motion.section>
 
+      {/* Features Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+      >
+        <h2 className="text-3xl font-bold mb-12 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent text-center">
+          Our Powerful Features
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Startup Listing */}
+          <div
+            className="rounded-xl shadow-xl p-6 backdrop-blur-sm"
+            style={gradientStyle}
+          >
+            <div className="w-14 h-14 rounded-full flex items-center justify-center bg-indigo-600/20 mb-6">
+              <Users className="w-7 h-7 text-indigo-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-4">Startup Listing</h3>
+            <p className="text-gray-300 mb-4">
+              Comprehensive public directory showcasing innovative startups with
+              detailed profiles, including industry, location, funding stage,
+              and key metrics.
+            </p>
+            <ul className="text-gray-400 space-y-2">
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Detailed startup profiles</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Advanced search and filtering</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Verified founder information</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Performance Tracking */}
+          <div
+            className="rounded-xl shadow-xl p-6 backdrop-blur-sm"
+            style={gradientStyle}
+          >
+            <div className="w-14 h-14 rounded-full flex items-center justify-center bg-indigo-600/20 mb-6">
+              <BarChart2 className="w-7 h-7 text-indigo-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-4">Performance Tracking</h3>
+            <p className="text-gray-300 mb-4">
+              Real-time analytics and metrics to help startups track their
+              visibility, engagement, and growth within the ecosystem.
+            </p>
+            <ul className="text-gray-400 space-y-2">
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Profile view analytics</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Engagement metrics</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Growth tracking over time</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Review System */}
+          <div
+            className="rounded-xl shadow-xl p-6 backdrop-blur-sm"
+            style={gradientStyle}
+          >
+            <div className="w-14 h-14 rounded-full flex items-center justify-center bg-indigo-600/20 mb-6">
+              <HeartHandshake className="w-7 h-7 text-indigo-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-4">Review System</h3>
+            <p className="text-gray-300 mb-4">
+              Transparent feedback mechanism allowing users to share experiences
+              and ratings about startups they've interacted with.
+            </p>
+            <ul className="text-gray-400 space-y-2">
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Verified user reviews</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Multi-criteria rating system</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Founder response capability</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Job Listings */}
+          <div
+            className="rounded-xl shadow-xl p-6 backdrop-blur-sm"
+            style={gradientStyle}
+          >
+            <div className="w-14 h-14 rounded-full flex items-center justify-center bg-indigo-600/20 mb-6">
+              <Zap className="w-7 h-7 text-indigo-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-4">Job Listings</h3>
+            <p className="text-gray-300 mb-4">
+              Dedicated job board connecting talented professionals with
+              exciting opportunities at innovative startups.
+            </p>
+            <ul className="text-gray-400 space-y-2">
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Startup-specific job board</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Targeted talent matching</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Application tracking</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Service Listing */}
+          <div
+            className="rounded-xl shadow-xl p-6 backdrop-blur-sm"
+            style={gradientStyle}
+          >
+            <div className="w-14 h-14 rounded-full flex items-center justify-center bg-indigo-600/20 mb-6">
+              <LinkIcon className="w-7 h-7 text-indigo-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-4">Service Listing</h3>
+            <p className="text-gray-300 mb-4">
+              Curated directory of services specifically tailored to help
+              startups grow, from legal to marketing and technical support.
+            </p>
+            <ul className="text-gray-400 space-y-2">
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Verified service providers</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Startup-friendly pricing</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Specialized startup services</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Coming Soon Feature */}
+          <div
+            className="rounded-xl shadow-xl p-6 backdrop-blur-sm"
+            style={gradientStyle}
+          >
+            <div className="w-14 h-14 rounded-full flex items-center justify-center bg-indigo-600/20 mb-6">
+              <Globe className="w-7 h-7 text-indigo-400" />
+            </div>
+            <h3 className="text-xl font-bold mb-4">And More Coming Soon</h3>
+            <p className="text-gray-300 mb-4">
+              We're constantly innovating to bring you more features that
+              support startup growth and ecosystem development.
+            </p>
+            <ul className="text-gray-400 space-y-2">
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Investor matching</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Funding opportunities</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-indigo-400 mr-2">✓</span>
+                <span>Community events</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </motion.section>
       {/* Stats Section */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -256,7 +441,6 @@ function AboutUs() {
           </div>
         </div>
       </motion.section>
-
       {/* Join Us Section */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}

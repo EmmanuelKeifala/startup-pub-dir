@@ -155,14 +155,14 @@ function Header() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Link href="/profile">
+                    <div>
                       <Avatar className="border-2 border-blue-500/50 hover:border-blue-500 transition-all duration-300 cursor-pointer">
                         <AvatarImage src={session.user.profilePicture || ""} />
                         <AvatarFallback className="bg-gradient-to-br from-blue-600 to-blue-800">
                           {getInitials(session.user.fullName || "")}
                         </AvatarFallback>
                       </Avatar>
-                    </Link>
+                    </div>
                   </motion.div>
                   <motion.li
                     whileHover={{ scale: 1.1 }}
@@ -232,10 +232,7 @@ function Header() {
                             exit={{ opacity: 0, x: -20 }}
                             transition={{ duration: 0.2, delay: 0.1 }}
                           >
-                            <Link
-                              href="/profile"
-                              className="flex items-center gap-3 text-sm font-medium tracking-wide text-gray-300 py-2 px-4 rounded-md transition-colors duration-200 hover:bg-blue-900/30"
-                            >
+                            <div className="flex items-center gap-3 text-sm font-medium tracking-wide text-gray-300 py-2 px-4 rounded-md transition-colors duration-200 hover:bg-blue-900/30">
                               <Avatar className="h-6 w-6 border border-blue-500/50">
                                 <AvatarImage
                                   src={session.user.profilePicture || ""}
@@ -245,7 +242,7 @@ function Header() {
                                 </AvatarFallback>
                               </Avatar>
                               <span>Profile</span>
-                            </Link>
+                            </div>
                           </motion.li>
                           <motion.li
                             initial={{ opacity: 0, x: -20 }}

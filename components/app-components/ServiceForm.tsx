@@ -29,9 +29,6 @@ const serviceFormSchema = z.object({
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   }),
-  price: z.number().min(0, {
-    message: "Price must be a positive number.",
-  }),
   startupId: z.string().optional(),
 });
 
@@ -60,7 +57,6 @@ export function ServiceForm({
     defaultValues: {
       name: "",
       description: "",
-      price: 0,
       ...defaultValues,
     },
   });
@@ -143,30 +139,6 @@ export function ServiceForm({
                       />
                     </FormControl>
                     <FormMessage className="text-red-300" />
-                  </FormItem>
-                )}
-              />
-
-              {/* Price */}
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price ($)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        min={0}
-                        placeholder="0"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Enter 0 if the price varies or requires a quote
-                    </FormDescription>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
