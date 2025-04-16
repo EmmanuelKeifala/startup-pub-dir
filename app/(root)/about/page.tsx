@@ -295,7 +295,7 @@ function AboutUs() {
             <h3 className="text-xl font-bold mb-4">Review System</h3>
             <p className="text-gray-300 mb-4">
               Transparent feedback mechanism allowing users to share experiences
-              and ratings about startups they've interacted with.
+              and ratings about startups they have interacted with.
             </p>
             <ul className="text-gray-400 space-y-2">
               <li className="flex items-start">
@@ -381,7 +381,7 @@ function AboutUs() {
             </div>
             <h3 className="text-xl font-bold mb-4">And More Coming Soon</h3>
             <p className="text-gray-300 mb-4">
-              We're constantly innovating to bring you more features that
+              We are constantly innovating to bring you more features that
               support startup growth and ecosystem development.
             </p>
             <ul className="text-gray-400 space-y-2">
