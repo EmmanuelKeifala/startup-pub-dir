@@ -214,7 +214,6 @@ export const hasApprovedStartup = async ({
 export const addStartUpService = async ({
   description,
   name,
-  price,
   startupId,
 }: ServiceFormValues): Promise<{
   success: boolean;
