@@ -17,7 +17,7 @@ function Header() {
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const [isHasRegisteredStartUp, setIsHasRegisteredStartUp] = useState(false);
   const handleLogOut = async () => {
     await signOut();
     setMobileMenuOpen(false);
@@ -35,8 +35,6 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  let isHasRegisteredStartUp = false;
-
   useEffect(() => {
     setMobileMenuOpen(false);
     const checkUser = async () => {
@@ -45,9 +43,9 @@ function Header() {
           id: session?.user.id as string,
         },
       });
-
+      console.log("Response: ", response);
       if (response) {
-        isHasRegisteredStartUp = true;
+        setIsHasRegisteredStartUp(true);
       }
     };
 
@@ -66,10 +64,7 @@ function Header() {
 
     if (session?.user?.role === "admin") {
       items.push({ href: "/admin", label: "Manage Startups" });
-    } else if (
-      session?.user?.role === "startup_owner" &&
-      isHasRegisteredStartUp
-    ) {
+    } else if (isHasRegisteredStartUp) {
       items.push({ href: "/admin", label: "Manage Startup" });
     }
 

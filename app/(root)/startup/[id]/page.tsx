@@ -42,6 +42,8 @@ async function StartUp({ params }: { params: StartUpProps }) {
 
   if (!startUpDetails) redirect("/");
 
+  const isOwner = startUpDetails.ownerId === session?.user.id;
+
   const response = await getJobs(id);
 
   return (
@@ -61,11 +63,11 @@ async function StartUp({ params }: { params: StartUpProps }) {
         locations={response?.locations as string[]}
       />
 
-      {servicesData.success && (
+      {servicesData.success && isOwner && (
         <StartupServices
           services={servicesData.data}
           startupId={id}
-          isOwner={true}
+          isOwner={isOwner}
           accentColor={startUpDetails?.companyColors as string}
         />
       )}

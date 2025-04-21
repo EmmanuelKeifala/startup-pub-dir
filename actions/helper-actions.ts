@@ -38,6 +38,7 @@ export const getStartUp = async ({ params }: { params: { id: string } }) => {
         rating: startups.rating,
         categoryId: startups.categoryId,
         categoryName: startupCategories.name,
+        ownerId: startups.ownerId,
       })
       .from(startups)
       .innerJoin(
