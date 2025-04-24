@@ -1,6 +1,6 @@
 "use client";
 
-import { Rocket, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { Rocket, Star } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { StartUpCover } from "./index";
@@ -8,13 +8,12 @@ import { Startup } from "@/types/general";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import ReactMarkDown from "react-markdown";
 import MarkdownRenderer from "./general-components/MarkDownRenderer";
 
 function StartUpOverview(startUp: Startup) {
   const { name, description, logo, rating, companyColors, categoryName, id } =
     startUp;
-  const [expanded, setExpanded] = useState(false);
+  const [expanded] = useState(false);
 
   const color = companyColors?.split(",")[0];
   const pathName = usePathname();
