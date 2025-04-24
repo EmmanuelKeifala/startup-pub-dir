@@ -43,3 +43,5 @@ eslint.config.mjs
 
 .vercel
 eslint.config.mjs
+
+/app/api/hack/*

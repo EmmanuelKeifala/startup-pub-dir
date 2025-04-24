@@ -22,6 +22,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import JobListings, { Job } from "./JobListing";
 
+import MarkdownRenderer from "./general-components/MarkDownRenderer";
+
 // Type definition for startup details
 export type StartupDetails = {
   id: string;
@@ -155,13 +157,14 @@ function StartUpDetails({
                 Summary
               </span>
             </h3>
+
             <div className="space-y-5 text-lg">
-              {(expanded ? paragraphs : shortDescription.split("\n")).map(
-                (line, i) => (
-                  <p key={i} className="leading-relaxed text-gray-300">
-                    {line}
-                  </p>
-                )
+              {expanded ? (
+                <div className="prose prose-sm max-w-none">
+                  <MarkdownRenderer markdownContent={fullDescription} />
+                </div>
+              ) : (
+                <MarkdownRenderer markdownContent={shortDescription} />
               )}
 
               {shouldShowReadMore && (

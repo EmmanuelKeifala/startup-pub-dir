@@ -11,12 +11,12 @@ import { Session } from "next-auth";
 import {
   getStartUpReviews,
   getStartUp,
-  getStartUpServices,
+  // getStartUpServices,
 } from "@/actions/helper-actions";
 import { Startup } from "@/types/general";
 import { getJobs } from "@/actions/jobs";
 import { Job } from "@/components/app-components/JobListing";
-import { StartupServices } from "@/components/app-components/StartupServices";
+// import { StartupServices } from "@/components/app-components/StartupServices";
 
 type StartUpProps = Promise<{ id: string }>;
 
@@ -36,13 +36,13 @@ async function StartUp({ params }: { params: StartUpProps }) {
     },
   });
 
-  const servicesData = await getStartUpServices({
-    startupId: id,
-  });
+  // const servicesData = await getStartUpServices({
+  //   startupId: id,
+  // });
 
   if (!startUpDetails) redirect("/");
 
-  const isOwner = startUpDetails.ownerId === session?.user.id;
+  // const isOwner = startUpDetails.ownerId === session?.user.id;
 
   const response = await getJobs(id);
 
@@ -63,14 +63,14 @@ async function StartUp({ params }: { params: StartUpProps }) {
         locations={response?.locations as string[]}
       />
 
-      {servicesData.success && isOwner && (
+      {/* {servicesData.success && isOwner && (
         <StartupServices
           services={servicesData.data}
           startupId={id}
           isOwner={isOwner}
           accentColor={startUpDetails?.companyColors as string}
         />
-      )}
+      )} */}
     </div>
   );
 }

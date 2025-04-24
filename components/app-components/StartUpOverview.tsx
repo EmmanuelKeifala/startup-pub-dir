@@ -8,6 +8,8 @@ import { Startup } from "@/types/general";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import ReactMarkDown from "react-markdown";
+import MarkdownRenderer from "./general-components/MarkDownRenderer";
 
 function StartUpOverview(startUp: Startup) {
   const { name, description, logo, rating, companyColors, categoryName, id } =
@@ -56,30 +58,14 @@ function StartUpOverview(startUp: Startup) {
               className="mt-2"
             >
               <p className="start-up-description text-gray-300 text-sm sm:text-base leading-relaxed">
-                {expanded ? description : shortDescription}
+                {expanded ? (
+                  <MarkdownRenderer markdownContent={description} />
+                ) : (
+                  <MarkdownRenderer markdownContent={shortDescription} />
+                )}
               </p>
 
               <div className="flex flex-wrap gap-2 sm:gap-4 mt-4 sm:mt-6">
-                {description && description.length > 150 && (
-                  <Button
-                    onClick={() => setExpanded(!expanded)}
-                    variant="ghost"
-                    className="flex items-center gap-1 text-xs sm:text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all h-8 sm:h-10 px-2 sm:px-4"
-                  >
-                    {expanded ? (
-                      <>
-                        <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <span>Read Less</span>
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <span>Read More</span>
-                      </>
-                    )}
-                  </Button>
-                )}
-
                 <Button className="start-up-overview_btn items-center bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 border-none shadow-lg h-8 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm">
                   <Link
                     href={`/startup/${id}`}
